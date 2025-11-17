@@ -9,6 +9,13 @@ Rails.application.routes.draw do
   get "/auth/:provider/callback", to: "auth/callbacks#kakao"
   get "/auth/failure", to: "auth/callbacks#failure"
 
+  # API routes
+  namespace :api do
+    # 헬스체크 엔드포인트
+    get "health", to: "health#index"           # 기본 헬스체크
+    get "health/detailed", to: "health#detailed" # 상세 헬스체크 (DB 연결 포함)
+  end
+
   # Defines the root path route ("/")
   # root "posts#index"
 end
