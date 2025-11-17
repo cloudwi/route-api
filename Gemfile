@@ -49,5 +49,10 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 end
 
+# JWT for token-based authentication
+gem "jwt"
+
+# OAuth
 gem "omniauth"
-gem "omniauth-kakao"
+gem "omniauth-oauth2"
+gem "omniauth-rails_csrf_protection"
