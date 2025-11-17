@@ -3,7 +3,7 @@
 require Rails.root.join("lib", "omniauth", "strategies", "kakao")
 
 # OmniAuth 전역 설정
-OmniAuth.config.allowed_request_methods = [:get, :post]  # GET과 POST 요청 모두 허용
+OmniAuth.config.allowed_request_methods = [ :get, :post ]  # GET과 POST 요청 모두 허용
 OmniAuth.config.silence_get_warning = true               # GET 요청에 대한 경고 메시지 숨기기
 
 # Rails 미들웨어 스택에 OmniAuth 추가

@@ -10,7 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_17_065646) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_17_075649) do
+  create_table "folders", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.integer "parent_id"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["name"], name: "index_folders_on_name"
+    t.index ["parent_id"], name: "index_folders_on_parent_id"
+    t.index ["user_id", "parent_id"], name: "index_folders_on_user_id_and_parent_id"
+    t.index ["user_id"], name: "index_folders_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email"
@@ -22,4 +35,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_17_065646) do
     t.index ["email"], name: "index_users_on_email"
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
   end
+
+  add_foreign_key "folders", "folders", column: "parent_id"
+  add_foreign_key "folders", "users"
 end

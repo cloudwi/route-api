@@ -20,6 +20,9 @@
 # 사용자 정보를 관리하는 모델
 # OAuth 인증(Kakao 등)을 통해 생성되며, JWT 인증에 사용됨
 class User < ApplicationRecord
+  # Associations
+  has_many :folders, dependent: :destroy  # 사용자가 소유한 폴더들 (사용자 삭제 시 폴더도 함께 삭제)
+
   # Validations
   validates :provider, presence: true                                      # OAuth 제공자는 필수
   validates :uid, presence: true, uniqueness: { scope: :provider }         # UID는 제공자별로 고유해야 함

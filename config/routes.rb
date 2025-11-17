@@ -14,6 +14,16 @@ Rails.application.routes.draw do
     # 헬스체크 엔드포인트
     get "health", to: "health#index"           # 기본 헬스체크
     get "health/detailed", to: "health#detailed" # 상세 헬스체크 (DB 연결 포함)
+
+    # 폴더 관리 엔드포인트
+    resources :folders do
+      member do
+        get :children  # GET /api/folders/:id/children - 특정 폴더의 직속 하위 폴더 조회
+      end
+      collection do
+        get :flat      # GET /api/folders/flat - 모든 폴더를 평면 리스트로 조회
+      end
+    end
   end
 
   # Defines the root path route ("/")
