@@ -2,5 +2,7 @@
 require Rails.root.join("lib", "omniauth", "strategies", "kakao")
 
 Rails.application.config.middleware.use OmniAuth::Builder do
-  provider :kakao, ENV["KAKAO_CLIENT_ID"], ENV["KAKAO_CLIENT_SECRET"]
+  provider :kakao,
+           Rails.application.credentials.dig(:kakao, :client_id),
+           Rails.application.credentials.dig(:kakao, :client_secret)
 end
