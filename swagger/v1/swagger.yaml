@@ -1,0 +1,409 @@
+---
+openapi: 3.0.1
+info:
+  title: Route API
+  version: v1
+  description: 장소 검색 및 폴더 관리 API
+paths:
+  "/api/v1/folders":
+    get:
+      summary: 모든 폴더 조회 (트리 구조)
+      tags:
+      - 폴더 관리
+      description: 현재 사용자의 모든 폴더를 계층형 트리 구조로 조회합니다
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  folders:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        description:
+                          type: string
+                          nullable: true
+                        created_at:
+                          type: string
+                          format: datetime
+                        updated_at:
+                          type: string
+                          format: datetime
+                        children:
+                          type: array
+        '401':
+          description: unauthorized
+    post:
+      summary: 폴더 생성
+      tags:
+      - 폴더 관리
+      description: 새 폴더를 생성합니다
+      security:
+      - bearer_auth: []
+      parameters: []
+      responses:
+        '201':
+          description: created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  folder:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      description:
+                        type: string
+                        nullable: true
+                      parent_id:
+                        type: integer
+                        nullable: true
+                      parent_name:
+                        type: string
+                        nullable: true
+                      path:
+                        type: string
+                      depth:
+                        type: integer
+                      is_root:
+                        type: boolean
+                      children_count:
+                        type: integer
+                      descendants_count:
+                        type: integer
+                      created_at:
+                        type: string
+                        format: datetime
+                      updated_at:
+                        type: string
+                        format: datetime
+        '401':
+          description: unauthorized
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                folder:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: 폴더 이름
+                    parent_id:
+                      type: integer
+                      nullable: true
+                      description: 부모 폴더 ID (없으면 최상위 폴더)
+                    description:
+                      type: string
+                      nullable: true
+                      description: 폴더 설명
+                  required:
+                  - name
+  "/api/v1/folders/flat":
+    get:
+      summary: 모든 폴더 조회 (평면 리스트)
+      tags:
+      - 폴더 관리
+      description: 현재 사용자의 모든 폴더를 평면 리스트로 조회합니다
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  folders:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        description:
+                          type: string
+                          nullable: true
+                        parent_id:
+                          type: integer
+                          nullable: true
+                        path:
+                          type: string
+                        depth:
+                          type: integer
+                        created_at:
+                          type: string
+                          format: datetime
+                        updated_at:
+                          type: string
+                          format: datetime
+  "/api/v1/folders/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: 폴더 ID
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: 특정 폴더 상세 조회
+      tags:
+      - 폴더 관리
+      description: 특정 폴더의 상세 정보를 조회합니다
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  folder:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      description:
+                        type: string
+                        nullable: true
+                      parent_id:
+                        type: integer
+                        nullable: true
+                      parent_name:
+                        type: string
+                        nullable: true
+                      path:
+                        type: string
+                      depth:
+                        type: integer
+                      is_root:
+                        type: boolean
+                      children_count:
+                        type: integer
+                      descendants_count:
+                        type: integer
+                      created_at:
+                        type: string
+                        format: datetime
+                      updated_at:
+                        type: string
+                        format: datetime
+        '404':
+          description: not found
+    patch:
+      summary: 폴더 수정
+      tags:
+      - 폴더 관리
+      description: 폴더 정보를 수정합니다
+      security:
+      - bearer_auth: []
+      parameters: []
+      responses:
+        '200':
+          description: updated
+        '404':
+          description: not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                folder:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: 폴더 이름
+                    parent_id:
+                      type: integer
+                      nullable: true
+                      description: 부모 폴더 ID
+                    description:
+                      type: string
+                      nullable: true
+                      description: 폴더 설명
+    delete:
+      summary: 폴더 삭제
+      tags:
+      - 폴더 관리
+      description: 폴더를 삭제합니다 (하위 폴더도 함께 삭제됨)
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: not found
+  "/api/v1/folders/{id}/children":
+    parameters:
+    - name: id
+      in: path
+      description: 폴더 ID
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: 하위 폴더 조회
+      tags:
+      - 폴더 관리
+      description: 특정 폴더의 직속 하위 폴더들만 조회합니다
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  folder_id:
+                    type: integer
+                  folder_name:
+                    type: string
+                  children:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        description:
+                          type: string
+                          nullable: true
+                        created_at:
+                          type: string
+                          format: datetime
+                        updated_at:
+                          type: string
+                          format: datetime
+        '404':
+          description: not found
+  "/api/v1/search":
+    get:
+      summary: 장소 검색
+      tags:
+      - 장소 검색
+      description: 네이버 로컬 검색 API를 통해 장소를 검색합니다
+      parameters:
+      - name: query
+        in: query
+        required: true
+        description: '검색 키워드 (예: "스타벅스 강남역")'
+        schema:
+          type: string
+      - name: display
+        in: query
+        required: false
+        description: '검색 결과 개수 (1-5, 기본값: 5)'
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query:
+                    type: string
+                    description: 검색한 키워드
+                  count:
+                    type: integer
+                    description: 검색 결과 개수
+                  places:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                          description: 장소명
+                        address:
+                          type: string
+                          description: 지번 주소
+                        road_address:
+                          type: string
+                          description: 도로명 주소
+                        category:
+                          type: string
+                          description: 카테고리
+                        telephone:
+                          type: string
+                          description: 전화번호
+                        latitude:
+                          type: number
+                          format: float
+                          description: 위도 (WGS84)
+                        longitude:
+                          type: number
+                          format: float
+                          description: 경도 (WGS84)
+                        link:
+                          type: string
+                          description: 네이버 플레이스 링크
+                required:
+                - query
+                - count
+                - places
+        '400':
+          description: query parameter missing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+components:
+  securitySchemes:
+    bearer_auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+servers:
+- url: http://localhost:3001
+  description: Development server
+- url: https://{defaultHost}
+  variables:
+    defaultHost:
+      default: api.example.com
+  description: Production server
