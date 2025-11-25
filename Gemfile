@@ -47,6 +47,9 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # RSpec for testing
+  gem "rspec-rails"
 end
 
 # JWT for token-based authentication
@@ -56,3 +59,11 @@ gem "jwt"
 gem "omniauth"
 gem "omniauth-oauth2"
 gem "omniauth-rails_csrf_protection"
+
+# HTTP client for external API calls
+gem "httparty"
+
+# API documentation with Swagger
+gem "rswag"
+gem "rswag-api"
+gem "rswag-ui"

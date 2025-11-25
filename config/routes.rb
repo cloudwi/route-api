@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount Rswag::Ui::Engine => '/api-docs'
+  mount Rswag::Api::Engine => '/api-docs'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -15,13 +17,19 @@ Rails.application.routes.draw do
     get "health", to: "health#index"           # 기본 헬스체크
     get "health/detailed", to: "health#detailed" # 상세 헬스체크 (DB 연결 포함)
 
-    # 폴더 관리 엔드포인트
-    resources :folders do
-      member do
-        get :children  # GET /api/folders/:id/children - 특정 폴더의 직속 하위 폴더 조회
-      end
-      collection do
-        get :flat      # GET /api/folders/flat - 모든 폴더를 평면 리스트로 조회
+    # v1 API 엔드포인트
+    namespace :v1 do
+      # 장소 검색
+      get "search", to: "search#index"  # GET /api/v1/search?query=스타벅스 강남역
+
+      # 폴더 관리
+      resources :folders do
+        member do
+          get :children  # GET /api/v1/folders/:id/children - 특정 폴더의 직속 하위 폴더 조회
+        end
+        collection do
+          get :flat      # GET /api/v1/folders/flat - 모든 폴더를 평면 리스트로 조회
+        end
       end
     end
   end
