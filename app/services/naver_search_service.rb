@@ -13,8 +13,8 @@ class NaverSearchService
       "/v1/search/local.json",
       query: { query: query, display: display },
       headers: {
-        "X-Naver-Client-Id" => Rails.application.credentials.dig(:naver, :client_id),
-        "X-Naver-Client-Secret" => Rails.application.credentials.dig(:naver, :client_secret)
+        "X-Naver-Client-Id" => Rails.application.credentials.dig(Rails.env.to_sym, :naver, :client_id),
+        "X-Naver-Client-Secret" => Rails.application.credentials.dig(Rails.env.to_sym, :naver, :client_secret)
       }
     )
 
