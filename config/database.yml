@@ -1,41 +1,43 @@
-# SQLite. Versions 3.8.0 and up are supported.
-#   gem install sqlite3
+# MySQL. Versions 5.7 and up are supported.
+#   gem install trilogy
 #
-#   Ensure the SQLite 3 gem is defined in your Gemfile
-#   gem "sqlite3"
+#   Ensure the Trilogy gem is defined in your Gemfile
+#   gem "trilogy"
 #
 default: &default
-  adapter: sqlite3
-  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  timeout: 5000
+  adapter: trilogy
+  encoding: utf8mb4
+  collation: utf8mb4_unicode_ci
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: <%= ENV.fetch("DB_USERNAME", "root") %>
+  password: <%= ENV.fetch("DB_PASSWORD", "") %>
+  host: <%= ENV.fetch("DB_HOST", "localhost") %>
+  port: <%= ENV.fetch("DB_PORT", 3307) %>
 
 development:
   <<: *default
-  database: storage/development.sqlite3
+  database: route_api_development
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: storage/test.sqlite3
+  database: route_api_test
 
-
-# Store production database in the storage/ directory, which by default
-# is mounted as a persistent Docker volume in config/deploy.yml.
 production:
   primary:
     <<: *default
-    database: storage/production.sqlite3
+    database: <%= ENV.fetch("DB_NAME", "route_api_production") %>
   cache:
     <<: *default
-    database: storage/production_cache.sqlite3
+    database: <%= ENV.fetch("DB_CACHE_NAME", "route_api_production_cache") %>
     migrations_paths: db/cache_migrate
   queue:
     <<: *default
-    database: storage/production_queue.sqlite3
+    database: <%= ENV.fetch("DB_QUEUE_NAME", "route_api_production_queue") %>
     migrations_paths: db/queue_migrate
   cable:
     <<: *default
-    database: storage/production_cable.sqlite3
+    database: <%= ENV.fetch("DB_CABLE_NAME", "route_api_production_cable") %>
     migrations_paths: db/cable_migrate
