@@ -28,6 +28,9 @@ Rails.application.routes.draw do
       # 장소 검색
       get "search", to: "search#index"  # GET /api/v1/search?query=스타벅스 강남역
 
+      # 경로 검색 (대중교통/자동차)
+      get "directions", to: "directions#index"  # GET /api/v1/directions?mode=transit|driving
+
       # 폴더 관리
       resources :folders do
         member do
@@ -39,7 +42,11 @@ Rails.application.routes.draw do
       end
 
       # 코스 관리
-      resources :courses, only: [ :index, :show, :create, :destroy ]
+      resources :courses, only: [ :index, :show, :create, :destroy ] do
+        member do
+          get :directions  # GET /api/v1/courses/:id/directions?mode=transit|driving
+        end
+      end
 
       # 장소 관리
       resources :places, only: [ :index, :show ] do
