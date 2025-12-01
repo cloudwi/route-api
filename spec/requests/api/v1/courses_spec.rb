@@ -256,7 +256,7 @@ RSpec.describe "Courses API", type: :request do
           allow(OdsayTransitService).to receive(:search_route).and_return({
             search_type: 0,
             count: 1,
-            paths: [{ path_type: 3, total_time: 25, total_distance: 8500, payment: 1400, sub_paths: [] }]
+            paths: [ { path_type: 3, total_time: 25, total_distance: 8500, payment: 1400, sub_paths: [] } ]
           })
         end
 
