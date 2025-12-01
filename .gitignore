@@ -22,12 +22,15 @@
 !/tmp/pids/
 !/tmp/pids/.keep
 
-# Ignore storage (uploaded files in development and any SQLite databases).
+# Ignore storage (uploaded files in development).
 /storage/*
 !/storage/.keep
 /tmp/storage/*
 !/tmp/storage/
 !/tmp/storage/.keep
+
+# Ignore IDE files
+/.idea/
 
 # Ignore key files for decrypting credentials and more.
 /config/*.key
