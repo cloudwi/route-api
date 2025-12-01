@@ -50,12 +50,22 @@ class OdsayTransitService
   end
 
   def self.parse_response(response)
+    # ODsay 에러 응답 처리: {"error": [{"code": "500", "message": "..."}]}
+    if response["error"].present?
+      error_info = response["error"]
+      error_msg = if error_info.is_a?(Array)
+        error_info.first&.dig("message") || "Unknown error"
+      else
+        error_info["msg"] || "Unknown error"
+      end
+      return { error: error_msg, paths: [] }
+    end
+
     result = response["result"]
 
-    # 에러 응답 처리
+    # 결과 없음 처리
     if result.nil? || result["path"].nil?
-      error_msg = response.dig("error", "msg") || "No route found"
-      return { error: error_msg, paths: [] }
+      return { error: "No route found", paths: [] }
     end
 
     paths = result["path"].map { |path| parse_path(path) }
