@@ -22,6 +22,10 @@
 class User < ApplicationRecord
   # Associations
   has_many :folders, dependent: :destroy  # 사용자가 소유한 폴더들 (사용자 삭제 시 폴더도 함께 삭제)
+  has_many :courses, dependent: :destroy  # 사용자가 소유한 코스들
+  has_many :places, dependent: :destroy   # 사용자가 저장한 장소들
+  has_many :place_likes, dependent: :destroy  # 사용자가 좋아요한 장소들
+  has_many :liked_places, through: :place_likes, source: :place
 
   # Validations
   validates :provider, presence: true                                      # OAuth 제공자는 필수

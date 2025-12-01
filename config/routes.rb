@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
-  mount Rswag::Ui::Engine => '/api-docs'
-  mount Rswag::Api::Engine => '/api-docs'
+  # Swagger UI - 운영 환경에서는 비활성화
+  unless Rails.env.production?
+    mount Rswag::Ui::Engine => '/api-docs'
+    mount Rswag::Api::Engine => '/api-docs'
+  end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -29,6 +32,20 @@ Rails.application.routes.draw do
         end
         collection do
           get :flat      # GET /api/v1/folders/flat - 모든 폴더를 평면 리스트로 조회
+        end
+      end
+
+      # 코스 관리
+      resources :courses, only: [:index, :show, :create, :destroy]
+
+      # 장소 관리
+      resources :places, only: [:index, :show] do
+        member do
+          post :like    # POST /api/v1/places/:id/like
+          delete :like, action: :unlike  # DELETE /api/v1/places/:id/like
+        end
+        collection do
+          get :liked    # GET /api/v1/places/liked - 좋아요한 장소 목록
         end
       end
     end

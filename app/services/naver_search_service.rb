@@ -38,15 +38,19 @@ class NaverSearchService
     items = response["items"] || []
 
     items.map do |item|
+      latitude = convert_coordinate(item["mapy"])
+      longitude = convert_coordinate(item["mapx"])
+
       {
         title: remove_html_tags(item["title"]),
         address: item["address"],
         road_address: item["roadAddress"],
         category: item["category"],
+        description: remove_html_tags(item["description"]),
         telephone: item["telephone"],
-        latitude: convert_coordinate(item["mapy"]),  # 네이버 좌표 → WGS84
-        longitude: convert_coordinate(item["mapx"]), # 네이버 좌표 → WGS84
-        link: item["link"]
+        latitude: latitude,
+        longitude: longitude,
+        naver_map_url: "https://map.naver.com/p/search/#{ERB::Util.url_encode(remove_html_tags(item['title']))}?c=#{longitude},#{latitude},15,0,0,0,dh"
       }
     end
   end
