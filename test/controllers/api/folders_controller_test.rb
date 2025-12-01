@@ -16,7 +16,7 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
 
   # Index action
   test "should get index with tree structure" do
-    get api_folders_url, headers: auth_headers
+    get api_v1_folders_url, headers: auth_headers
     assert_response :success
 
     json = JSON.parse(response.body)
@@ -24,13 +24,13 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should require authentication for index" do
-    get api_folders_url
+    get api_v1_folders_url
     assert_response :unauthorized
   end
 
   # Flat action
   test "should get flat list of folders" do
-    get flat_api_folders_url, headers: auth_headers
+    get flat_api_v1_folders_url, headers: auth_headers
     assert_response :success
 
     json = JSON.parse(response.body)
@@ -39,7 +39,7 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
 
   # Show action
   test "should show folder" do
-    get api_folder_url(@root_folder), headers: auth_headers
+    get api_v1_folder_url(@root_folder), headers: auth_headers
     assert_response :success
 
     json = JSON.parse(response.body)
@@ -49,18 +49,18 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
 
   test "should not show other user's folder" do
     other_folder = folders(:root_folder_user_two)
-    get api_folder_url(other_folder), headers: auth_headers
+    get api_v1_folder_url(other_folder), headers: auth_headers
     assert_response :not_found
   end
 
   test "should return 404 for non-existent folder" do
-    get api_folder_url(id: 99999), headers: auth_headers
+    get api_v1_folder_url(id: 99999), headers: auth_headers
     assert_response :not_found
   end
 
   # Children action
   test "should get folder children" do
-    get children_api_folder_url(@root_folder), headers: auth_headers
+    get children_api_v1_folder_url(@root_folder), headers: auth_headers
     assert_response :success
 
     json = JSON.parse(response.body)
@@ -71,7 +71,7 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
   # Create action
   test "should create root folder" do
     assert_difference("Folder.count") do
-      post api_folders_url,
+      post api_v1_folders_url,
            params: { folder: { name: "New Root Folder", description: "Test" } },
            headers: auth_headers
     end
@@ -84,7 +84,7 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
 
   test "should create subfolder" do
     assert_difference("Folder.count") do
-      post api_folders_url,
+      post api_v1_folders_url,
            params: { folder: { name: "New Subfolder", parent_id: @root_folder.id } },
            headers: auth_headers
     end
@@ -97,7 +97,7 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
 
   test "should not create folder without name" do
     assert_no_difference("Folder.count") do
-      post api_folders_url,
+      post api_v1_folders_url,
            params: { folder: { name: "" } },
            headers: auth_headers
     end
@@ -108,7 +108,7 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
   test "should not create folder with other user's parent" do
     other_folder = folders(:root_folder_user_two)
     assert_no_difference("Folder.count") do
-      post api_folders_url,
+      post api_v1_folders_url,
            params: { folder: { name: "Test", parent_id: other_folder.id } },
            headers: auth_headers
     end
@@ -118,7 +118,7 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
 
   test "should require authentication to create folder" do
     assert_no_difference("Folder.count") do
-      post api_folders_url,
+      post api_v1_folders_url,
            params: { folder: { name: "Test" } }
     end
 
@@ -127,7 +127,7 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
 
   # Update action
   test "should update folder" do
-    patch api_folder_url(@subfolder),
+    patch api_v1_folder_url(@subfolder),
           params: { folder: { name: "Updated Name" } },
           headers: auth_headers
 
@@ -138,7 +138,7 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
 
   test "should update folder parent" do
     # nested_folder의 부모를 subfolder에서 root_folder로 변경
-    patch api_folder_url(@nested_folder),
+    patch api_v1_folder_url(@nested_folder),
           params: { folder: { parent_id: @root_folder.id } },
           headers: auth_headers
 
@@ -148,7 +148,7 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should not update with invalid data" do
-    patch api_folder_url(@subfolder),
+    patch api_v1_folder_url(@subfolder),
           params: { folder: { name: "" } },
           headers: auth_headers
 
@@ -157,7 +157,7 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
 
   test "should not update other user's folder" do
     other_folder = folders(:root_folder_user_two)
-    patch api_folder_url(other_folder),
+    patch api_v1_folder_url(other_folder),
           params: { folder: { name: "Hacked" } },
           headers: auth_headers
 
@@ -166,7 +166,7 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
 
   test "should not update with other user's parent" do
     other_folder = folders(:root_folder_user_two)
-    patch api_folder_url(@subfolder),
+    patch api_v1_folder_url(@subfolder),
           params: { folder: { parent_id: other_folder.id } },
           headers: auth_headers
 
@@ -178,7 +178,7 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
     folder = Folder.create!(user: @user, name: "To Delete")
 
     assert_difference("Folder.count", -1) do
-      delete api_folder_url(folder), headers: auth_headers
+      delete api_v1_folder_url(folder), headers: auth_headers
     end
 
     assert_response :success
@@ -189,7 +189,7 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
     initial_count = Folder.count
     descendants_count = @root_folder.descendants.count
 
-    delete api_folder_url(@root_folder), headers: auth_headers
+    delete api_v1_folder_url(@root_folder), headers: auth_headers
 
     assert_response :success
     assert_equal initial_count - descendants_count - 1, Folder.count
@@ -198,7 +198,7 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
   test "should not destroy other user's folder" do
     other_folder = folders(:root_folder_user_two)
     assert_no_difference("Folder.count") do
-      delete api_folder_url(other_folder), headers: auth_headers
+      delete api_v1_folder_url(other_folder), headers: auth_headers
     end
 
     assert_response :not_found

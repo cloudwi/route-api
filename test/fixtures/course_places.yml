@@ -2,26 +2,10 @@
 
 one:
   course: one
-  naver_place_id: MyString
-  name: MyString
-  address: MyString
-  road_address: MyString
-  latitude: 9.99
-  longitude: 9.99
-  category: MyString
-  telephone: MyString
-  naver_map_url: MyString
-  position: 1
+  place: one
+  position: 0
 
 two:
   course: two
-  naver_place_id: MyString
-  name: MyString
-  address: MyString
-  road_address: MyString
-  latitude: 9.99
-  longitude: 9.99
-  category: MyString
-  telephone: MyString
-  naver_map_url: MyString
-  position: 1
+  place: two
+  position: 0
