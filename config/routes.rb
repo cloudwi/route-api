@@ -1,8 +1,8 @@
 Rails.application.routes.draw do
   # Swagger UI - 운영 환경에서는 비활성화
   unless Rails.env.production?
-    mount Rswag::Ui::Engine => '/api-docs'
-    mount Rswag::Api::Engine => '/api-docs'
+    mount Rswag::Ui::Engine => "/api-docs"
+    mount Rswag::Api::Engine => "/api-docs"
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -22,6 +22,9 @@ Rails.application.routes.draw do
 
     # v1 API 엔드포인트
     namespace :v1 do
+      # 인기 장소 (로그인 불필요)
+      get "popular_places", to: "popular_places#index"  # GET /api/v1/popular_places
+
       # 장소 검색
       get "search", to: "search#index"  # GET /api/v1/search?query=스타벅스 강남역
 
@@ -36,10 +39,10 @@ Rails.application.routes.draw do
       end
 
       # 코스 관리
-      resources :courses, only: [:index, :show, :create, :destroy]
+      resources :courses, only: [ :index, :show, :create, :destroy ]
 
       # 장소 관리
-      resources :places, only: [:index, :show] do
+      resources :places, only: [ :index, :show ] do
         member do
           post :like    # POST /api/v1/places/:id/like
           delete :like, action: :unlike  # DELETE /api/v1/places/:id/like

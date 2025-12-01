@@ -23,7 +23,7 @@ module Api
         end
 
         display = params[:display]&.to_i || 5
-        display = [[display, 1].max, 5].min # 1~5 사이로 제한
+        display = [ [ display, 1 ].max, 5 ].min # 1~5 사이로 제한
 
         results = NaverSearchService.search_places(
           query: query,

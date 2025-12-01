@@ -12,7 +12,7 @@ RSpec.describe "Folders API", type: :request do
       tags "폴더 관리"
       description "현재 사용자의 모든 폴더를 계층형 트리 구조로 조회합니다"
       produces "application/json"
-      security [bearer_auth: []]
+      security [ bearer_auth: [] ]
 
       response "200", "조회 성공" do
         schema type: :object,
@@ -47,7 +47,7 @@ RSpec.describe "Folders API", type: :request do
       description "새 폴더를 생성합니다"
       consumes "application/json"
       produces "application/json"
-      security [bearer_auth: []]
+      security [ bearer_auth: [] ]
 
       parameter name: :folder_params, in: :body, schema: {
         type: :object,
@@ -104,7 +104,7 @@ RSpec.describe "Folders API", type: :request do
       tags "폴더 관리"
       description "현재 사용자의 모든 폴더를 평면 리스트로 조회합니다"
       produces "application/json"
-      security [bearer_auth: []]
+      security [ bearer_auth: [] ]
 
       response "200", "조회 성공" do
         schema type: :object,
@@ -139,7 +139,7 @@ RSpec.describe "Folders API", type: :request do
       tags "폴더 관리"
       description "특정 폴더의 상세 정보를 조회합니다"
       produces "application/json"
-      security [bearer_auth: []]
+      security [ bearer_auth: [] ]
 
       response "200", "조회 성공" do
         schema type: :object,
@@ -179,7 +179,7 @@ RSpec.describe "Folders API", type: :request do
       description "폴더 정보를 수정합니다"
       consumes "application/json"
       produces "application/json"
-      security [bearer_auth: []]
+      security [ bearer_auth: [] ]
 
       parameter name: :folder_params, in: :body, schema: {
         type: :object,
@@ -213,7 +213,7 @@ RSpec.describe "Folders API", type: :request do
       tags "폴더 관리"
       description "폴더를 삭제합니다 (하위 폴더도 함께 삭제됨)"
       produces "application/json"
-      security [bearer_auth: []]
+      security [ bearer_auth: [] ]
 
       response "200", "삭제 성공" do
         schema type: :object,
@@ -240,7 +240,7 @@ RSpec.describe "Folders API", type: :request do
       tags "폴더 관리"
       description "특정 폴더의 직속 하위 폴더들만 조회합니다"
       produces "application/json"
-      security [bearer_auth: []]
+      security [ bearer_auth: [] ]
 
       response "200", "조회 성공" do
         schema type: :object,

@@ -4,7 +4,7 @@ module Api
     # 사용자의 계층형 폴더 구조를 관리하는 CRUD 엔드포인트 제공
     class FoldersController < ApplicationController
       before_action :require_login # 모든 액션에 로그인 필수
-      before_action :set_folder, only: [:show, :update, :destroy, :children]
+      before_action :set_folder, only: [ :show, :update, :destroy, :children ]
 
       # GET /api/v1/folders
       # 현재 사용자의 모든 폴더 조회 (트리 구조로 반환)

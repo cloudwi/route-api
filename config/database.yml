@@ -9,35 +9,53 @@ default: &default
   encoding: utf8mb4
   collation: utf8mb4_unicode_ci
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: <%= ENV.fetch("DB_USERNAME", "root") %>
-  password: <%= ENV.fetch("DB_PASSWORD", "") %>
-  host: <%= ENV.fetch("DB_HOST", "localhost") %>
-  port: <%= ENV.fetch("DB_PORT", 3307) %>
 
 development:
   <<: *default
   database: route_api_development
+  username: <%= Rails.application.credentials.dig(:development, :database, :username) %>
+  password: <%= Rails.application.credentials.dig(:development, :database, :password) %>
+  host: <%= Rails.application.credentials.dig(:development, :database, :host) %>
+  port: <%= Rails.application.credentials.dig(:development, :database, :port) %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
-  database: route_api_test
+  adapter: sqlite3
+  database: storage/test.sqlite3
+  pool: 5
+  timeout: 5000
 
 production:
   primary:
     <<: *default
-    database: <%= ENV.fetch("DB_NAME", "route_api_production") %>
+    database: <%= Rails.application.credentials.dig(:production, :database, :name) || "route_api_production" %>
+    username: <%= Rails.application.credentials.dig(:production, :database, :username) %>
+    password: <%= Rails.application.credentials.dig(:production, :database, :password) %>
+    host: <%= Rails.application.credentials.dig(:production, :database, :host) %>
+    port: <%= Rails.application.credentials.dig(:production, :database, :port) %>
   cache:
     <<: *default
-    database: <%= ENV.fetch("DB_CACHE_NAME", "route_api_production_cache") %>
+    database: <%= Rails.application.credentials.dig(:production, :database, :cache_name) || "route_api_production_cache" %>
+    username: <%= Rails.application.credentials.dig(:production, :database, :username) %>
+    password: <%= Rails.application.credentials.dig(:production, :database, :password) %>
+    host: <%= Rails.application.credentials.dig(:production, :database, :host) %>
+    port: <%= Rails.application.credentials.dig(:production, :database, :port) %>
     migrations_paths: db/cache_migrate
   queue:
     <<: *default
-    database: <%= ENV.fetch("DB_QUEUE_NAME", "route_api_production_queue") %>
+    database: <%= Rails.application.credentials.dig(:production, :database, :queue_name) || "route_api_production_queue" %>
+    username: <%= Rails.application.credentials.dig(:production, :database, :username) %>
+    password: <%= Rails.application.credentials.dig(:production, :database, :password) %>
+    host: <%= Rails.application.credentials.dig(:production, :database, :host) %>
+    port: <%= Rails.application.credentials.dig(:production, :database, :port) %>
     migrations_paths: db/queue_migrate
   cable:
     <<: *default
-    database: <%= ENV.fetch("DB_CABLE_NAME", "route_api_production_cable") %>
+    database: <%= Rails.application.credentials.dig(:production, :database, :cable_name) || "route_api_production_cable" %>
+    username: <%= Rails.application.credentials.dig(:production, :database, :username) %>
+    password: <%= Rails.application.credentials.dig(:production, :database, :password) %>
+    host: <%= Rails.application.credentials.dig(:production, :database, :host) %>
+    port: <%= Rails.application.credentials.dig(:production, :database, :port) %>
     migrations_paths: db/cable_migrate

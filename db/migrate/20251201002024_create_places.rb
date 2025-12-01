@@ -16,6 +16,6 @@ class CreatePlaces < ActiveRecord::Migration[8.1]
     end
 
     # 같은 사용자가 같은 네이버 장소를 중복 저장하지 않도록
-    add_index :places, [:user_id, :naver_place_id], unique: true
+    add_index :places, [ :user_id, :naver_place_id ], unique: true
   end
 end
