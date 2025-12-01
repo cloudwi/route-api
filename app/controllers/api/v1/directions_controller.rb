@@ -3,8 +3,7 @@ module Api
     # 통합 경로 검색 API 컨트롤러
     # 이동 수단에 따라 대중교통(ODsay) 또는 자동차(Naver Directions) 경로를 반환
     class DirectionsController < ApplicationController
-      # 인증 불필요
-      skip_before_action :authenticate_request
+      before_action :require_login
 
       # 지원하는 이동 수단
       TRANSPORT_MODES = %w[transit driving].freeze

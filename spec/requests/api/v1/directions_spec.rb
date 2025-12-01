@@ -3,11 +3,17 @@
 require "swagger_helper"
 
 RSpec.describe "Directions API", type: :request do
+  # 테스트용 사용자 및 토큰 생성
+  let(:user) { User.create!(provider: "kakao", uid: "test_directions", name: "Test User", email: "test@test.com") }
+  let(:token) { JsonWebToken.encode(user_id: user.id) }
+  let(:Authorization) { "Bearer #{token}" }
+
   path "/api/v1/directions" do
     get "경로 검색" do
       tags "경로 검색"
       description "대중교통(ODsay) 또는 자동차(Naver Directions) 경로를 검색합니다"
       produces "application/json"
+      security [ bearer_auth: [] ]
 
       parameter name: :start_lat, in: :query, type: :number, required: true,
                 description: "출발지 위도 (예: 37.5546)"
@@ -175,6 +181,17 @@ RSpec.describe "Directions API", type: :request do
 
       response "400", "잘못된 좌표" do
         let(:start_lat) { 50.0 }
+        let(:start_lng) { 126.9706 }
+        let(:end_lat) { 37.4979 }
+        let(:end_lng) { 127.0276 }
+        let(:mode) { "transit" }
+
+        run_test!
+      end
+
+      response "401", "인증 실패" do
+        let(:Authorization) { "" }
+        let(:start_lat) { 37.5546 }
         let(:start_lng) { 126.9706 }
         let(:end_lat) { 37.4979 }
         let(:end_lng) { 127.0276 }

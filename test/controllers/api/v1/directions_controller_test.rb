@@ -6,15 +6,35 @@ class Api::V1::DirectionsControllerTest < ActionDispatch::IntegrationTest
   SEOUL_STATION = { lat: 37.5546, lng: 126.9706 }.freeze
   GANGNAM_STATION = { lat: 37.4979, lng: 127.0276 }.freeze
 
-  # === 파라미터 검증 테스트 ===
+  def setup
+    @user = create(:user)
+  end
 
-  test "should return error when start_lat is missing" do
+  # === 인증 테스트 ===
+
+  test "should return unauthorized without authentication" do
     get api_v1_directions_url, params: {
+      start_lat: SEOUL_STATION[:lat],
       start_lng: SEOUL_STATION[:lng],
       end_lat: GANGNAM_STATION[:lat],
       end_lng: GANGNAM_STATION[:lng],
       mode: "transit"
     }
+
+    assert_response :unauthorized
+  end
+
+  # === 파라미터 검증 테스트 ===
+
+  test "should return error when start_lat is missing" do
+    get api_v1_directions_url,
+        params: {
+          start_lng: SEOUL_STATION[:lng],
+          end_lat: GANGNAM_STATION[:lat],
+          end_lng: GANGNAM_STATION[:lng],
+          mode: "transit"
+        },
+        headers: auth_headers(@user)
 
     assert_response :bad_request
     json = JSON.parse(response.body)
@@ -22,12 +42,14 @@ class Api::V1::DirectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should return error when mode is missing" do
-    get api_v1_directions_url, params: {
-      start_lat: SEOUL_STATION[:lat],
-      start_lng: SEOUL_STATION[:lng],
-      end_lat: GANGNAM_STATION[:lat],
-      end_lng: GANGNAM_STATION[:lng]
-    }
+    get api_v1_directions_url,
+        params: {
+          start_lat: SEOUL_STATION[:lat],
+          start_lng: SEOUL_STATION[:lng],
+          end_lat: GANGNAM_STATION[:lat],
+          end_lng: GANGNAM_STATION[:lng]
+        },
+        headers: auth_headers(@user)
 
     assert_response :bad_request
     json = JSON.parse(response.body)
@@ -35,13 +57,15 @@ class Api::V1::DirectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should return error for invalid mode" do
-    get api_v1_directions_url, params: {
-      start_lat: SEOUL_STATION[:lat],
-      start_lng: SEOUL_STATION[:lng],
-      end_lat: GANGNAM_STATION[:lat],
-      end_lng: GANGNAM_STATION[:lng],
-      mode: "bicycle"
-    }
+    get api_v1_directions_url,
+        params: {
+          start_lat: SEOUL_STATION[:lat],
+          start_lng: SEOUL_STATION[:lng],
+          end_lat: GANGNAM_STATION[:lat],
+          end_lng: GANGNAM_STATION[:lng],
+          mode: "bicycle"
+        },
+        headers: auth_headers(@user)
 
     assert_response :bad_request
     json = JSON.parse(response.body)
@@ -49,13 +73,15 @@ class Api::V1::DirectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should return error for coordinates outside Korean peninsula" do
-    get api_v1_directions_url, params: {
-      start_lat: 50.0,  # 한국 영역 밖
-      start_lng: SEOUL_STATION[:lng],
-      end_lat: GANGNAM_STATION[:lat],
-      end_lng: GANGNAM_STATION[:lng],
-      mode: "transit"
-    }
+    get api_v1_directions_url,
+        params: {
+          start_lat: 50.0,  # 한국 영역 밖
+          start_lng: SEOUL_STATION[:lng],
+          end_lat: GANGNAM_STATION[:lat],
+          end_lng: GANGNAM_STATION[:lng],
+          mode: "transit"
+        },
+        headers: auth_headers(@user)
 
     assert_response :bad_request
     json = JSON.parse(response.body)
@@ -80,13 +106,15 @@ class Api::V1::DirectionsControllerTest < ActionDispatch::IntegrationTest
     }
 
     OdsayTransitService.stub :search_route, mock_response do
-      get api_v1_directions_url, params: {
-        start_lat: SEOUL_STATION[:lat],
-        start_lng: SEOUL_STATION[:lng],
-        end_lat: GANGNAM_STATION[:lat],
-        end_lng: GANGNAM_STATION[:lng],
-        mode: "transit"
-      }
+      get api_v1_directions_url,
+          params: {
+            start_lat: SEOUL_STATION[:lat],
+            start_lng: SEOUL_STATION[:lng],
+            end_lat: GANGNAM_STATION[:lat],
+            end_lng: GANGNAM_STATION[:lng],
+            mode: "transit"
+          },
+          headers: auth_headers(@user)
 
       assert_response :success
       json = JSON.parse(response.body)
@@ -99,14 +127,16 @@ class Api::V1::DirectionsControllerTest < ActionDispatch::IntegrationTest
     mock_response = { count: 0, paths: [] }
 
     OdsayTransitService.stub :search_route, mock_response do
-      get api_v1_directions_url, params: {
-        start_lat: SEOUL_STATION[:lat],
-        start_lng: SEOUL_STATION[:lng],
-        end_lat: GANGNAM_STATION[:lat],
-        end_lng: GANGNAM_STATION[:lng],
-        mode: "transit",
-        path_type: 1  # 지하철만
-      }
+      get api_v1_directions_url,
+          params: {
+            start_lat: SEOUL_STATION[:lat],
+            start_lng: SEOUL_STATION[:lng],
+            end_lat: GANGNAM_STATION[:lat],
+            end_lng: GANGNAM_STATION[:lng],
+            mode: "transit",
+            path_type: 1  # 지하철만
+          },
+          headers: auth_headers(@user)
 
       assert_response :success
     end
@@ -129,13 +159,15 @@ class Api::V1::DirectionsControllerTest < ActionDispatch::IntegrationTest
     }
 
     NaverDirectionsService.stub :search_route, mock_response do
-      get api_v1_directions_url, params: {
-        start_lat: SEOUL_STATION[:lat],
-        start_lng: SEOUL_STATION[:lng],
-        end_lat: GANGNAM_STATION[:lat],
-        end_lng: GANGNAM_STATION[:lng],
-        mode: "driving"
-      }
+      get api_v1_directions_url,
+          params: {
+            start_lat: SEOUL_STATION[:lat],
+            start_lng: SEOUL_STATION[:lng],
+            end_lat: GANGNAM_STATION[:lat],
+            end_lng: GANGNAM_STATION[:lng],
+            mode: "driving"
+          },
+          headers: auth_headers(@user)
 
       assert_response :success
       json = JSON.parse(response.body)
@@ -148,14 +180,16 @@ class Api::V1::DirectionsControllerTest < ActionDispatch::IntegrationTest
     mock_response = { summary: {}, sections: [], path: [] }
 
     NaverDirectionsService.stub :search_route, mock_response do
-      get api_v1_directions_url, params: {
-        start_lat: SEOUL_STATION[:lat],
-        start_lng: SEOUL_STATION[:lng],
-        end_lat: GANGNAM_STATION[:lat],
-        end_lng: GANGNAM_STATION[:lng],
-        mode: "driving",
-        route_option: "fastest"
-      }
+      get api_v1_directions_url,
+          params: {
+            start_lat: SEOUL_STATION[:lat],
+            start_lng: SEOUL_STATION[:lng],
+            end_lat: GANGNAM_STATION[:lat],
+            end_lng: GANGNAM_STATION[:lng],
+            mode: "driving",
+            route_option: "fastest"
+          },
+          headers: auth_headers(@user)
 
       assert_response :success
     end
@@ -166,14 +200,16 @@ class Api::V1::DirectionsControllerTest < ActionDispatch::IntegrationTest
     waypoints = [ { lat: 37.52, lng: 127.0 } ].to_json
 
     NaverDirectionsService.stub :search_route, mock_response do
-      get api_v1_directions_url, params: {
-        start_lat: SEOUL_STATION[:lat],
-        start_lng: SEOUL_STATION[:lng],
-        end_lat: GANGNAM_STATION[:lat],
-        end_lng: GANGNAM_STATION[:lng],
-        mode: "driving",
-        waypoints: waypoints
-      }
+      get api_v1_directions_url,
+          params: {
+            start_lat: SEOUL_STATION[:lat],
+            start_lng: SEOUL_STATION[:lng],
+            end_lat: GANGNAM_STATION[:lat],
+            end_lng: GANGNAM_STATION[:lng],
+            mode: "driving",
+            waypoints: waypoints
+          },
+          headers: auth_headers(@user)
 
       assert_response :success
     end
@@ -185,13 +221,15 @@ class Api::V1::DirectionsControllerTest < ActionDispatch::IntegrationTest
     error_response = { error: "API call failed" }
 
     OdsayTransitService.stub :search_route, error_response do
-      get api_v1_directions_url, params: {
-        start_lat: SEOUL_STATION[:lat],
-        start_lng: SEOUL_STATION[:lng],
-        end_lat: GANGNAM_STATION[:lat],
-        end_lng: GANGNAM_STATION[:lng],
-        mode: "transit"
-      }
+      get api_v1_directions_url,
+          params: {
+            start_lat: SEOUL_STATION[:lat],
+            start_lng: SEOUL_STATION[:lng],
+            end_lat: GANGNAM_STATION[:lat],
+            end_lng: GANGNAM_STATION[:lng],
+            mode: "transit"
+          },
+          headers: auth_headers(@user)
 
       assert_response :unprocessable_entity
       json = JSON.parse(response.body)
@@ -205,13 +243,15 @@ class Api::V1::DirectionsControllerTest < ActionDispatch::IntegrationTest
     mock_response = { count: 0, paths: [] }
 
     OdsayTransitService.stub :search_route, mock_response do
-      get api_v1_directions_url, params: {
-        start_lat: SEOUL_STATION[:lat],
-        start_lng: SEOUL_STATION[:lng],
-        end_lat: GANGNAM_STATION[:lat],
-        end_lng: GANGNAM_STATION[:lng],
-        mode: "transit"
-      }
+      get api_v1_directions_url,
+          params: {
+            start_lat: SEOUL_STATION[:lat],
+            start_lng: SEOUL_STATION[:lng],
+            end_lat: GANGNAM_STATION[:lat],
+            end_lng: GANGNAM_STATION[:lng],
+            mode: "transit"
+          },
+          headers: auth_headers(@user)
 
       assert_response :success
       json = JSON.parse(response.body)
@@ -221,5 +261,12 @@ class Api::V1::DirectionsControllerTest < ActionDispatch::IntegrationTest
       assert_equal GANGNAM_STATION[:lat], json["destination"]["lat"]
       assert_equal GANGNAM_STATION[:lng], json["destination"]["lng"]
     end
+  end
+
+  private
+
+  def auth_headers(user)
+    token = JsonWebToken.encode(user_id: user.id)
+    { "Authorization" => "Bearer #{token}" }
   end
 end
