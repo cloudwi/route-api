@@ -1,0 +1,29 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  naver_place_id: "place_one"
+  name: Test Place One
+  address: 서울시 강남구 테스트동 123
+  road_address: 서울시 강남구 테스트로 456
+  latitude: 37.123456
+  longitude: 127.123456
+  category: 카페
+  telephone: "02-1234-5678"
+  naver_map_url: https://map.naver.com/p/search/TestPlace
+  views_count: 0
+  likes_count: 0
+
+two:
+  user: two
+  naver_place_id: "place_two"
+  name: Test Place Two
+  address: 서울시 서초구 테스트동 789
+  road_address: 서울시 서초구 테스트로 101
+  latitude: 37.654321
+  longitude: 127.654321
+  category: 음식점
+  telephone: "02-9876-5432"
+  naver_map_url: https://map.naver.com/p/search/TestPlace2
+  views_count: 0
+  likes_count: 0
