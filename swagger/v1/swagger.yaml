@@ -309,6 +309,8 @@ paths:
       tags:
       - 경로 검색
       description: 대중교통(ODsay) 또는 자동차(Naver Directions) 경로를 검색합니다
+      security:
+      - bearer_auth: []
       parameters:
       - name: start_lat
         in: query
@@ -498,6 +500,8 @@ paths:
                   mode:
                     type: string
                     nullable: true
+        '401':
+          description: 인증 실패
   "/api/v1/folders":
     get:
       summary: 모든 폴더 조회 (트리 구조)
