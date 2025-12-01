@@ -3,8 +3,189 @@ openapi: 3.0.1
 info:
   title: Route API
   version: v1
-  description: 장소 검색 및 폴더 관리 API
+  description: 장소 검색, 코스 관리, 폴더 관리 API
 paths:
+  "/api/v1/courses":
+    get:
+      summary: 코스 목록 조회
+      tags:
+      - 코스 관리
+      description: 현재 로그인한 사용자의 모든 코스를 조회합니다
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: 조회 성공
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: 코스 ID
+                    name:
+                      type: string
+                      description: 코스 이름
+                    places:
+                      type: array
+                      items:
+                        "$ref": "#/components/schemas/Place"
+                    createdAt:
+                      type: string
+                      format: date-time
+                      description: 생성일시
+                  required:
+                  - id
+                  - name
+                  - places
+                  - createdAt
+        '401':
+          description: 인증 실패
+    post:
+      summary: 코스 생성
+      tags:
+      - 코스 관리
+      description: 새로운 코스를 생성합니다
+      security:
+      - bearer_auth: []
+      parameters: []
+      responses:
+        '201':
+          description: 생성 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: 코스 ID
+                  name:
+                    type: string
+                    description: 코스 이름
+                  places:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Place"
+                  createdAt:
+                    type: string
+                    format: date-time
+                    description: 생성일시
+                required:
+                - id
+                - name
+                - places
+                - createdAt
+        '401':
+          description: 인증 실패
+        '422':
+          description: 유효성 검사 실패
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 코스 이름
+                places:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: 네이버 장소 ID
+                      name:
+                        type: string
+                        description: 장소명
+                      address:
+                        type: string
+                        description: 지번 주소
+                      roadAddress:
+                        type: string
+                        description: 도로명 주소
+                      lat:
+                        type: number
+                        description: 위도
+                      lng:
+                        type: number
+                        description: 경도
+                      category:
+                        type: string
+                        description: 카테고리
+                      telephone:
+                        type: string
+                        description: 전화번호
+                      naverMapUrl:
+                        type: string
+                        description: 네이버 지도 URL
+                    required:
+                    - name
+                    - lat
+                    - lng
+              required:
+              - name
+              - places
+  "/api/v1/courses/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: 코스 ID
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: 코스 상세 조회
+      tags:
+      - 코스 관리
+      description: 특정 코스의 상세 정보를 조회합니다
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  places:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Place"
+                  createdAt:
+                    type: string
+                    format: date-time
+        '404':
+          description: 코스 없음
+    delete:
+      summary: 코스 삭제
+      tags:
+      - 코스 관리
+      description: 코스를 삭제합니다
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: 삭제 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: 코스 없음
   "/api/v1/folders":
     get:
       summary: 모든 폴더 조회 (트리 구조)
@@ -15,7 +196,7 @@ paths:
       - bearer_auth: []
       responses:
         '200':
-          description: successful
+          description: 조회 성공
           content:
             application/json:
               schema:
@@ -35,14 +216,14 @@ paths:
                           nullable: true
                         created_at:
                           type: string
-                          format: datetime
+                          format: date-time
                         updated_at:
                           type: string
-                          format: datetime
+                          format: date-time
                         children:
                           type: array
         '401':
-          description: unauthorized
+          description: 인증 실패
     post:
       summary: 폴더 생성
       tags:
@@ -53,7 +234,7 @@ paths:
       parameters: []
       responses:
         '201':
-          description: created
+          description: 생성 성공
           content:
             application/json:
               schema:
@@ -89,12 +270,12 @@ paths:
                         type: integer
                       created_at:
                         type: string
-                        format: datetime
+                        format: date-time
                       updated_at:
                         type: string
-                        format: datetime
+                        format: date-time
         '401':
-          description: unauthorized
+          description: 인증 실패
       requestBody:
         content:
           application/json:
@@ -127,7 +308,7 @@ paths:
       - bearer_auth: []
       responses:
         '200':
-          description: successful
+          description: 조회 성공
           content:
             application/json:
               schema:
@@ -154,10 +335,10 @@ paths:
                           type: integer
                         created_at:
                           type: string
-                          format: datetime
+                          format: date-time
                         updated_at:
                           type: string
-                          format: datetime
+                          format: date-time
   "/api/v1/folders/{id}":
     parameters:
     - name: id
@@ -175,7 +356,7 @@ paths:
       - bearer_auth: []
       responses:
         '200':
-          description: successful
+          description: 조회 성공
           content:
             application/json:
               schema:
@@ -209,12 +390,12 @@ paths:
                         type: integer
                       created_at:
                         type: string
-                        format: datetime
+                        format: date-time
                       updated_at:
                         type: string
-                        format: datetime
+                        format: date-time
         '404':
-          description: not found
+          description: 폴더 없음
     patch:
       summary: 폴더 수정
       tags:
@@ -225,9 +406,9 @@ paths:
       parameters: []
       responses:
         '200':
-          description: updated
+          description: 수정 성공
         '404':
-          description: not found
+          description: 폴더 없음
       requestBody:
         content:
           application/json:
@@ -239,15 +420,12 @@ paths:
                   properties:
                     name:
                       type: string
-                      description: 폴더 이름
                     parent_id:
                       type: integer
                       nullable: true
-                      description: 부모 폴더 ID
                     description:
                       type: string
                       nullable: true
-                      description: 폴더 설명
     delete:
       summary: 폴더 삭제
       tags:
@@ -257,7 +435,7 @@ paths:
       - bearer_auth: []
       responses:
         '200':
-          description: deleted
+          description: 삭제 성공
           content:
             application/json:
               schema:
@@ -266,7 +444,7 @@ paths:
                   message:
                     type: string
         '404':
-          description: not found
+          description: 폴더 없음
   "/api/v1/folders/{id}/children":
     parameters:
     - name: id
@@ -284,7 +462,7 @@ paths:
       - bearer_auth: []
       responses:
         '200':
-          description: successful
+          description: 조회 성공
           content:
             application/json:
               schema:
@@ -308,12 +486,12 @@ paths:
                           nullable: true
                         created_at:
                           type: string
-                          format: datetime
+                          format: date-time
                         updated_at:
                           type: string
-                          format: datetime
+                          format: date-time
         '404':
-          description: not found
+          description: 폴더 없음
   "/api/v1/search":
     get:
       summary: 장소 검색
@@ -324,7 +502,7 @@ paths:
       - name: query
         in: query
         required: true
-        description: '검색 키워드 (예: "스타벅스 강남역")'
+        description: '검색 키워드 (예: 스타벅스 강남역)'
         schema:
           type: string
       - name: display
@@ -335,7 +513,7 @@ paths:
           type: integer
       responses:
         '200':
-          description: successful
+          description: 검색 성공
           content:
             application/json:
               schema:
@@ -364,6 +542,9 @@ paths:
                         category:
                           type: string
                           description: 카테고리
+                        description:
+                          type: string
+                          description: 설명
                         telephone:
                           type: string
                           description: 전화번호
@@ -375,15 +556,15 @@ paths:
                           type: number
                           format: float
                           description: 경도 (WGS84)
-                        link:
+                        naver_map_url:
                           type: string
-                          description: 네이버 플레이스 링크
+                          description: 네이버 지도 URL
                 required:
                 - query
                 - count
                 - places
         '400':
-          description: query parameter missing
+          description: 검색어 누락
           content:
             application/json:
               schema:
@@ -393,12 +574,6 @@ paths:
                     type: string
                   message:
                     type: string
-components:
-  securitySchemes:
-    bearer_auth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
 servers:
 - url: http://localhost:3000
   description: Development server
@@ -407,3 +582,40 @@ servers:
     defaultHost:
       default: api.example.com
   description: Production server
+components:
+  securitySchemes:
+    bearer_auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Place:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 네이버 장소 ID
+        name:
+          type: string
+          description: 장소명
+        address:
+          type: string
+          description: 지번 주소
+        roadAddress:
+          type: string
+          description: 도로명 주소
+        lat:
+          type: number
+          description: 위도
+        lng:
+          type: number
+          description: 경도
+        category:
+          type: string
+          description: 카테고리
+        telephone:
+          type: string
+          description: 전화번호
+        naverMapUrl:
+          type: string
+          description: 네이버 지도 URL

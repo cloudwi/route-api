@@ -1,0 +1,27 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  course: one
+  naver_place_id: MyString
+  name: MyString
+  address: MyString
+  road_address: MyString
+  latitude: 9.99
+  longitude: 9.99
+  category: MyString
+  telephone: MyString
+  naver_map_url: MyString
+  position: 1
+
+two:
+  course: two
+  naver_place_id: MyString
+  name: MyString
+  address: MyString
+  road_address: MyString
+  latitude: 9.99
+  longitude: 9.99
+  category: MyString
+  telephone: MyString
+  naver_map_url: MyString
+  position: 1

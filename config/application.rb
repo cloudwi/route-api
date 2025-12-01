@@ -4,6 +4,11 @@ require "rails/all"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
+
+# Suppress Hashie deprecation warning (incompatibility with Rails 8)
+require "hashie"
+Hashie.logger = Logger.new(nil)
+
 Bundler.require(*Rails.groups)
 
 module RouteApi
