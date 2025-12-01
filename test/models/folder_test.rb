@@ -2,20 +2,22 @@ require "test_helper"
 
 class FolderTest < ActiveSupport::TestCase
   def setup
-    @user = users(:one)
-    @root_folder = folders(:root_folder_user_one)
-    @subfolder = folders(:subfolder_user_one)
-    @nested_folder = folders(:nested_folder_user_one)
+    @user = create(:user)
+    @other_user = create(:user)
+    @root_folder = create(:folder, user: @user, name: "Projects")
+    @subfolder = create(:folder, user: @user, name: "Backend", parent: @root_folder)
+    @nested_folder = create(:folder, user: @user, name: "API", parent: @subfolder)
+    @other_user_folder = create(:folder, user: @other_user, name: "Other Root")
   end
 
   # Validations
   test "should be valid with valid attributes" do
-    folder = Folder.new(user: @user, name: "New Folder")
+    folder = build(:folder, user: @user)
     assert folder.valid?
   end
 
   test "should require name" do
-    folder = Folder.new(user: @user, name: nil)
+    folder = build(:folder, user: @user, name: nil)
     assert_not folder.valid?
     assert_includes folder.errors[:name], "can't be blank"
   end
@@ -26,7 +28,7 @@ class FolderTest < ActiveSupport::TestCase
   end
 
   test "should validate name length" do
-    folder = Folder.new(user: @user, name: "a" * 256)
+    folder = build(:folder, user: @user, name: "a" * 256)
     assert_not folder.valid?
   end
 
@@ -127,6 +129,6 @@ class FolderTest < ActiveSupport::TestCase
   test "for_user scope should return only folders for specific user" do
     user_folders = Folder.for_user(@user.id)
     assert_includes user_folders, @root_folder
-    assert_not_includes user_folders, folders(:root_folder_user_two)
+    assert_not_includes user_folders, @other_user_folder
   end
 end

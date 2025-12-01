@@ -13,7 +13,7 @@ RSpec.describe "Courses API", type: :request do
       tags "코스 관리"
       description "현재 로그인한 사용자의 모든 코스를 조회합니다"
       produces "application/json"
-      security [bearer_auth: []]
+      security [ bearer_auth: [] ]
 
       response "200", "조회 성공" do
         schema type: :array,
@@ -45,7 +45,7 @@ RSpec.describe "Courses API", type: :request do
       description "새로운 코스를 생성합니다"
       consumes "application/json"
       produces "application/json"
-      security [bearer_auth: []]
+      security [ bearer_auth: [] ]
 
       parameter name: :course_params, in: :body, schema: {
         type: :object,
@@ -128,7 +128,7 @@ RSpec.describe "Courses API", type: :request do
       tags "코스 관리"
       description "특정 코스의 상세 정보를 조회합니다"
       produces "application/json"
-      security [bearer_auth: []]
+      security [ bearer_auth: [] ]
 
       response "200", "조회 성공" do
         schema type: :object,
@@ -157,7 +157,7 @@ RSpec.describe "Courses API", type: :request do
       tags "코스 관리"
       description "코스를 삭제합니다"
       produces "application/json"
-      security [bearer_auth: []]
+      security [ bearer_auth: [] ]
 
       response "200", "삭제 성공" do
         schema type: :object,

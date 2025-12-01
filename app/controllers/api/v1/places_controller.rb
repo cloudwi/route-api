@@ -2,7 +2,7 @@ module Api
   module V1
     class PlacesController < ApplicationController
       before_action :require_login
-      before_action :set_place, only: [:show, :like, :unlike]
+      before_action :set_place, only: [ :show, :like, :unlike ]
 
       # GET /api/v1/places
       # 내 장소 목록 조회

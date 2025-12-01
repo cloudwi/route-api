@@ -2,11 +2,12 @@ require "test_helper"
 
 class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
   def setup
-    @user = users(:one)
-    @other_user = users(:two)
-    @root_folder = folders(:root_folder_user_one)
-    @subfolder = folders(:subfolder_user_one)
-    @nested_folder = folders(:nested_folder_user_one)
+    @user = create(:user)
+    @other_user = create(:user)
+    @root_folder = create(:folder, user: @user, name: "Root Folder")
+    @subfolder = create(:folder, user: @user, name: "Subfolder", parent: @root_folder)
+    @nested_folder = create(:folder, user: @user, name: "Nested Folder", parent: @subfolder)
+    @other_user_folder = create(:folder, user: @other_user, name: "Other User Folder")
     @token = JsonWebToken.encode(user_id: @user.id)
   end
 
@@ -48,8 +49,7 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should not show other user's folder" do
-    other_folder = folders(:root_folder_user_two)
-    get api_v1_folder_url(other_folder), headers: auth_headers
+    get api_v1_folder_url(@other_user_folder), headers: auth_headers
     assert_response :not_found
   end
 
@@ -106,10 +106,9 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should not create folder with other user's parent" do
-    other_folder = folders(:root_folder_user_two)
     assert_no_difference("Folder.count") do
       post api_v1_folders_url,
-           params: { folder: { name: "Test", parent_id: other_folder.id } },
+           params: { folder: { name: "Test", parent_id: @other_user_folder.id } },
            headers: auth_headers
     end
 
@@ -137,7 +136,6 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update folder parent" do
-    # nested_folder의 부모를 subfolder에서 root_folder로 변경
     patch api_v1_folder_url(@nested_folder),
           params: { folder: { parent_id: @root_folder.id } },
           headers: auth_headers
@@ -156,8 +154,7 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should not update other user's folder" do
-    other_folder = folders(:root_folder_user_two)
-    patch api_v1_folder_url(other_folder),
+    patch api_v1_folder_url(@other_user_folder),
           params: { folder: { name: "Hacked" } },
           headers: auth_headers
 
@@ -165,9 +162,8 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should not update with other user's parent" do
-    other_folder = folders(:root_folder_user_two)
     patch api_v1_folder_url(@subfolder),
-          params: { folder: { parent_id: other_folder.id } },
+          params: { folder: { parent_id: @other_user_folder.id } },
           headers: auth_headers
 
     assert_response :not_found
@@ -175,7 +171,7 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
 
   # Destroy action
   test "should destroy folder" do
-    folder = Folder.create!(user: @user, name: "To Delete")
+    folder = create(:folder, user: @user, name: "To Delete")
 
     assert_difference("Folder.count", -1) do
       delete api_v1_folder_url(folder), headers: auth_headers
@@ -185,20 +181,18 @@ class Api::FoldersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should destroy folder and all descendants" do
-    # root_folder를 삭제하면 subfolder와 nested_folder도 함께 삭제됨
-    initial_count = Folder.count
+    initial_count = Folder.where(user: @user).count
     descendants_count = @root_folder.descendants.count
 
     delete api_v1_folder_url(@root_folder), headers: auth_headers
 
     assert_response :success
-    assert_equal initial_count - descendants_count - 1, Folder.count
+    assert_equal initial_count - descendants_count - 1, Folder.where(user: @user).count
   end
 
   test "should not destroy other user's folder" do
-    other_folder = folders(:root_folder_user_two)
     assert_no_difference("Folder.count") do
-      delete api_v1_folder_url(other_folder), headers: auth_headers
+      delete api_v1_folder_url(@other_user_folder), headers: auth_headers
     end
 
     assert_response :not_found
