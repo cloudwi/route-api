@@ -20,6 +20,7 @@ module Api
       #
       # 선택 파라미터 (대중교통):
       #   - path_type: 경로 유형 (0: 모두, 1: 지하철, 2: 버스)
+      #   - include_graph_info: true면 노선 좌표 포함 (지도에 경로 그리기용)
       #
       # 선택 파라미터 (자동차):
       #   - route_option: 경로 옵션 (fastest, comfortable, optimal, avoid_toll, avoid_car_only)
@@ -114,7 +115,8 @@ module Api
           start_lng: start_lng,
           end_lat: end_lat,
           end_lng: end_lng,
-          path_type: params[:path_type]&.to_i || 0
+          path_type: params[:path_type]&.to_i || 0,
+          include_graph_info: params[:include_graph_info] == "true"
         )
       end
 

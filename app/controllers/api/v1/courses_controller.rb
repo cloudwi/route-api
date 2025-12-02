@@ -211,7 +211,7 @@ module Api
           total_fuel += summary[:fuel_price].to_i
         end
 
-        total_minutes = (total_duration / 60_000.0).round(1)
+        total_minutes = (total_duration / 60_000.0).round
 
         {
           total_duration: total_duration,
@@ -234,7 +234,7 @@ module Api
 
       def format_duration(minutes)
         hours = (minutes / 60).to_i
-        mins = (minutes % 60).round
+        mins = (minutes % 60).to_i
         if hours > 0
           "#{hours}시간 #{mins}분"
         else
