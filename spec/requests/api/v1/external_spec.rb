@@ -2,10 +2,10 @@
 
 require "swagger_helper"
 
-RSpec.describe "Search API", type: :request do
-  path "/api/v1/search" do
-    get "장소 검색" do
-      tags "장소 검색"
+RSpec.describe "External Search API", type: :request do
+  path "/api/v1/external/search" do
+    get "외부 장소 검색" do
+      tags "외부 장소 검색"
       description "네이버 로컬 검색 API를 통해 장소를 검색합니다"
       produces "application/json"
 

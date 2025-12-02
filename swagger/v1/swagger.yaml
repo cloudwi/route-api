@@ -511,11 +511,11 @@ paths:
                     nullable: true
         '401':
           description: 인증 실패
-  "/api/v1/search":
+  "/api/v1/external/search":
     get:
-      summary: 장소 검색
+      summary: 외부 장소 검색
       tags:
-      - 장소 검색
+      - 외부 장소 검색
       description: 네이버 로컬 검색 API를 통해 장소를 검색합니다
       parameters:
       - name: query
