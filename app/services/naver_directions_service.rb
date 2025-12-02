@@ -2,7 +2,7 @@
 # 출발지와 도착지 좌표를 기반으로 자동차 경로를 검색
 class NaverDirectionsService
   include HTTParty
-  base_uri "https://naveropenapi.apigw.ntruss.com/map-direction/v1"
+  base_uri "https://maps.apigw.ntruss.com/map-direction/v1"
 
   # 경로 옵션 상수
   OPTIONS = {
@@ -111,7 +111,7 @@ class NaverDirectionsService
         waypoints: summary["waypoints"]&.map { |wp| parse_location(wp) } || [],
         distance: summary["distance"],  # 총 거리 (m)
         duration: summary["duration"],  # 총 소요시간 (ms)
-        duration_minutes: (summary["duration"] / 60_000.0).round(1),  # 분 단위
+        duration_minutes: (summary["duration"] / 60_000.0).round,  # 분 단위 (정수)
         departure_time: summary["departureTime"],
         bbox: summary["bbox"],  # 경로 바운딩 박스
         toll_fare: summary["tollFare"],  # 통행료

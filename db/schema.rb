@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_01_015653) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_01_233835) do
   create_table "course_places", id: { comment: "코스-장소 연결 고유 식별자" }, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "course_id", null: false, comment: "코스 ID"
     t.datetime "created_at", null: false, comment: "생성 일시"
@@ -27,19 +27,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_01_015653) do
     t.datetime "updated_at", null: false, comment: "수정 일시"
     t.bigint "user_id", null: false, comment: "소유자 사용자 ID"
     t.index ["user_id"], name: "index_courses_on_user_id"
-  end
-
-  create_table "folders", id: { comment: "폴더 고유 식별자" }, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.datetime "created_at", null: false, comment: "생성 일시"
-    t.text "description", comment: "폴더 설명"
-    t.string "name", null: false, comment: "폴더 이름"
-    t.bigint "parent_id", comment: "상위 폴더 ID (null이면 루트 폴더)"
-    t.datetime "updated_at", null: false, comment: "수정 일시"
-    t.bigint "user_id", null: false, comment: "소유자 사용자 ID"
-    t.index ["name"], name: "index_folders_on_name"
-    t.index ["parent_id"], name: "index_folders_on_parent_id"
-    t.index ["user_id", "parent_id"], name: "index_folders_on_user_id_and_parent_id"
-    t.index ["user_id"], name: "index_folders_on_user_id"
   end
 
   create_table "place_likes", id: { comment: "좋아요 고유 식별자" }, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -86,8 +73,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_01_015653) do
   add_foreign_key "course_places", "courses"
   add_foreign_key "course_places", "places"
   add_foreign_key "courses", "users"
-  add_foreign_key "folders", "folders", column: "parent_id"
-  add_foreign_key "folders", "users"
   add_foreign_key "place_likes", "places"
   add_foreign_key "place_likes", "users"
   add_foreign_key "places", "users"

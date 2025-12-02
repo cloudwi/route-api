@@ -25,21 +25,15 @@ Rails.application.routes.draw do
       # 인기 장소 (로그인 불필요)
       get "popular_places", to: "popular_places#index"  # GET /api/v1/popular_places
 
-      # 장소 검색
+      # 장소 검색 (네이버 API)
       get "search", to: "search#index"  # GET /api/v1/search?query=스타벅스 강남역
+
+      # 내 장소/코스 검색 (로그인 필요)
+      get "my_search", to: "my_search#index"  # GET /api/v1/my_search?q=카페&category=카페
+      get "my_search/categories", to: "my_search#categories"  # GET /api/v1/my_search/categories
 
       # 경로 검색 (대중교통/자동차)
       get "directions", to: "directions#index"  # GET /api/v1/directions?mode=transit|driving
-
-      # 폴더 관리
-      resources :folders do
-        member do
-          get :children  # GET /api/v1/folders/:id/children - 특정 폴더의 직속 하위 폴더 조회
-        end
-        collection do
-          get :flat      # GET /api/v1/folders/flat - 모든 폴더를 평면 리스트로 조회
-        end
-      end
 
       # 코스 관리
       resources :courses, only: [ :index, :show, :create, :destroy ] do
@@ -51,8 +45,7 @@ Rails.application.routes.draw do
       # 장소 관리
       resources :places, only: [ :index, :show ] do
         member do
-          post :like    # POST /api/v1/places/:id/like
-          delete :like, action: :unlike  # DELETE /api/v1/places/:id/like
+          post :like    # POST /api/v1/places/:id/like - 좋아요 토글
         end
         collection do
           get :liked    # GET /api/v1/places/liked - 좋아요한 장소 목록

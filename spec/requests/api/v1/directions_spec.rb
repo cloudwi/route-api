@@ -31,6 +31,9 @@ RSpec.describe "Directions API", type: :request do
       parameter name: :path_type, in: :query, type: :integer, required: false,
                 enum: [ 0, 1, 2 ],
                 description: "[대중교통] 경로 유형 (0: 모두, 1: 지하철, 2: 버스)"
+      parameter name: :include_graph_info, in: :query, type: :string, required: false,
+                enum: %w[true false],
+                description: "[대중교통] 노선 좌표 포함 여부 (true: 지도에 경로 그리기용 좌표 포함)"
 
       # 자동차 옵션
       parameter name: :route_option, in: :query, type: :string, required: false,
