@@ -142,13 +142,13 @@ class OdsayTransitService
 
     # graphPos가 객체 배열인 경우: [{x: lng, y: lat}, ...]
     if graph_pos.is_a?(Array) && graph_pos.first.is_a?(Hash)
-      return graph_pos.map { |coord| [coord["x"].to_f, coord["y"].to_f] }
+      return graph_pos.map { |coord| [ coord["x"].to_f, coord["y"].to_f ] }
     end
 
     # graphPos가 문자열인 경우: "x1 y1 x2 y2 ..."
     if graph_pos.is_a?(String)
       coords = graph_pos.strip.split(/\s+/)
-      return coords.each_slice(2).map { |lng, lat| [lng.to_f, lat.to_f] }
+      return coords.each_slice(2).map { |lng, lat| [ lng.to_f, lat.to_f ] }
     end
 
     []

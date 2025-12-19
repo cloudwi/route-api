@@ -56,14 +56,15 @@ module Api
 
         # 카테고리 필터
         if category.present?
-          places = places.where("category LIKE ?", "%#{category}%")
+          places = places.where("category LIKE ?", "%#{ActiveRecord::Base.sanitize_sql_like(category)}%")
         end
 
         # 키워드 검색 (이름, 주소)
         if query.present?
+          sanitized_query = ActiveRecord::Base.sanitize_sql_like(query)
           places = places.where(
             "name LIKE ? OR address LIKE ? OR road_address LIKE ?",
-            "%#{query}%", "%#{query}%", "%#{query}%"
+            "%#{sanitized_query}%", "%#{sanitized_query}%", "%#{sanitized_query}%"
           )
         end
 
@@ -75,7 +76,7 @@ module Api
 
         # 키워드 검색 (코스 이름)
         if query.present?
-          courses = courses.where("name LIKE ?", "%#{query}%")
+          courses = courses.where("name LIKE ?", "%#{ActiveRecord::Base.sanitize_sql_like(query)}%")
         end
 
         courses.order(created_at: :desc).limit(limit)
