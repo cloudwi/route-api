@@ -13,10 +13,10 @@ default: &default
 development:
   <<: *default
   database: route_api_development
-  username: <%= Rails.application.credentials.fetch(:development).fetch(:database).fetch(:username) %>
-  password: <%= Rails.application.credentials.fetch(:development).fetch(:database).fetch(:password) %>
-  host: <%= Rails.application.credentials.fetch(:development).fetch(:database).fetch(:host) %>
-  port: <%= Rails.application.credentials.fetch(:development).fetch(:database).fetch(:port) %>
+  username: <%= Rails.application.credentials.dig(:development, :database, :username) %>
+  password: <%= Rails.application.credentials.dig(:development, :database, :password) %>
+  host: <%= Rails.application.credentials.dig(:development, :database, :host) %>
+  port: <%= Rails.application.credentials.dig(:development, :database, :port) %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -30,32 +30,32 @@ test:
 production:
   primary:
     <<: *default
-    database: <%= Rails.application.credentials.fetch(:production).fetch(:database).fetch(:name) %>
-    username: <%= Rails.application.credentials.fetch(:production).fetch(:database).fetch(:username) %>
-    password: <%= Rails.application.credentials.fetch(:production).fetch(:database).fetch(:password) %>
-    host: <%= Rails.application.credentials.fetch(:production).fetch(:database).fetch(:host) %>
-    port: <%= Rails.application.credentials.fetch(:production).fetch(:database).fetch(:port) %>
+    database: <%= Rails.application.credentials.dig(:production, :database, :name) %>
+    username: <%= Rails.application.credentials.dig(:production, :database, :username) %>
+    password: <%= Rails.application.credentials.dig(:production, :database, :password) %>
+    host: <%= Rails.application.credentials.dig(:production, :database, :host) %>
+    port: <%= Rails.application.credentials.dig(:production, :database, :port) %>
   cache:
     <<: *default
-    database: <%= Rails.application.credentials.fetch(:production).fetch(:database).fetch(:cache_name) %>
-    username: <%= Rails.application.credentials.fetch(:production).fetch(:database).fetch(:username) %>
-    password: <%= Rails.application.credentials.fetch(:production).fetch(:database).fetch(:password) %>
-    host: <%= Rails.application.credentials.fetch(:production).fetch(:database).fetch(:host) %>
-    port: <%= Rails.application.credentials.fetch(:production).fetch(:database).fetch(:port) %>
+    database: <%= Rails.application.credentials.dig(:production, :database, :cache_name) %>
+    username: <%= Rails.application.credentials.dig(:production, :database, :username) %>
+    password: <%= Rails.application.credentials.dig(:production, :database, :password) %>
+    host: <%= Rails.application.credentials.dig(:production, :database, :host) %>
+    port: <%= Rails.application.credentials.dig(:production, :database, :port) %>
     migrations_paths: db/cache_migrate
   queue:
     <<: *default
-    database: <%= Rails.application.credentials.fetch(:production).fetch(:database).fetch(:queue_name) %>
-    username: <%= Rails.application.credentials.fetch(:production).fetch(:database).fetch(:username) %>
-    password: <%= Rails.application.credentials.fetch(:production).fetch(:database).fetch(:password) %>
-    host: <%= Rails.application.credentials.fetch(:production).fetch(:database).fetch(:host) %>
-    port: <%= Rails.application.credentials.fetch(:production).fetch(:database).fetch(:port) %>
+    database: <%= Rails.application.credentials.dig(:production, :database, :queue_name) %>
+    username: <%= Rails.application.credentials.dig(:production, :database, :username) %>
+    password: <%= Rails.application.credentials.dig(:production, :database, :password) %>
+    host: <%= Rails.application.credentials.dig(:production, :database, :host) %>
+    port: <%= Rails.application.credentials.dig(:production, :database, :port) %>
     migrations_paths: db/queue_migrate
   cable:
     <<: *default
-    database: <%= Rails.application.credentials.fetch(:production).fetch(:database).fetch(:cable_name) %>
-    username: <%= Rails.application.credentials.fetch(:production).fetch(:database).fetch(:username) %>
-    password: <%= Rails.application.credentials.fetch(:production).fetch(:database).fetch(:password) %>
-    host: <%= Rails.application.credentials.fetch(:production).fetch(:database).fetch(:host) %>
-    port: <%= Rails.application.credentials.fetch(:production).fetch(:database).fetch(:port) %>
+    database: <%= Rails.application.credentials.dig(:production, :database, :cable_name) %>
+    username: <%= Rails.application.credentials.dig(:production, :database, :username) %>
+    password: <%= Rails.application.credentials.dig(:production, :database, :password) %>
+    host: <%= Rails.application.credentials.dig(:production, :database, :host) %>
+    port: <%= Rails.application.credentials.dig(:production, :database, :port) %>
     migrations_paths: db/cable_migrate
