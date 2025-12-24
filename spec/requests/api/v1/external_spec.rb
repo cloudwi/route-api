@@ -3,11 +3,17 @@
 require "swagger_helper"
 
 RSpec.describe "External Search API", type: :request do
+  # 테스트용 사용자 및 토큰 생성
+  let(:user) { User.create!(provider: "kakao", uid: "test_external", name: "Test User", email: "test@test.com") }
+  let(:token) { JsonWebToken.encode(user_id: user.id) }
+  let(:Authorization) { "Bearer #{token}" }
+
   path "/api/v1/external/search" do
     get "외부 장소 검색" do
       tags "외부 장소 검색"
       description "네이버 로컬 검색 API를 통해 장소를 검색합니다"
       produces "application/json"
+      security [ bearer_auth: [] ]
 
       parameter name: :query, in: :query, type: :string, required: true,
                 description: "검색 키워드 (예: 스타벅스 강남역)"

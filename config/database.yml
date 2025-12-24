@@ -30,14 +30,14 @@ test:
 production:
   primary:
     <<: *default
-    database: <%= Rails.application.credentials.dig(:production, :database, :name) || "route_api_production" %>
+    database: <%= Rails.application.credentials.dig(:production, :database, :name) %>
     username: <%= Rails.application.credentials.dig(:production, :database, :username) %>
     password: <%= Rails.application.credentials.dig(:production, :database, :password) %>
     host: <%= Rails.application.credentials.dig(:production, :database, :host) %>
     port: <%= Rails.application.credentials.dig(:production, :database, :port) %>
   cache:
     <<: *default
-    database: <%= Rails.application.credentials.dig(:production, :database, :cache_name) || "route_api_production_cache" %>
+    database: <%= Rails.application.credentials.dig(:production, :database, :cache_name) %>
     username: <%= Rails.application.credentials.dig(:production, :database, :username) %>
     password: <%= Rails.application.credentials.dig(:production, :database, :password) %>
     host: <%= Rails.application.credentials.dig(:production, :database, :host) %>
@@ -45,7 +45,7 @@ production:
     migrations_paths: db/cache_migrate
   queue:
     <<: *default
-    database: <%= Rails.application.credentials.dig(:production, :database, :queue_name) || "route_api_production_queue" %>
+    database: <%= Rails.application.credentials.dig(:production, :database, :queue_name) %>
     username: <%= Rails.application.credentials.dig(:production, :database, :username) %>
     password: <%= Rails.application.credentials.dig(:production, :database, :password) %>
     host: <%= Rails.application.credentials.dig(:production, :database, :host) %>
@@ -53,7 +53,7 @@ production:
     migrations_paths: db/queue_migrate
   cable:
     <<: *default
-    database: <%= Rails.application.credentials.dig(:production, :database, :cable_name) || "route_api_production_cable" %>
+    database: <%= Rails.application.credentials.dig(:production, :database, :cable_name) %>
     username: <%= Rails.application.credentials.dig(:production, :database, :username) %>
     password: <%= Rails.application.credentials.dig(:production, :database, :password) %>
     host: <%= Rails.application.credentials.dig(:production, :database, :host) %>
