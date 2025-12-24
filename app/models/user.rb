@@ -22,8 +22,6 @@
 class User < ApplicationRecord
   # Associations
   has_many :diaries, dependent: :destroy  # 사용자가 작성한 일기들
-  has_many :diary_users, dependent: :destroy  # 공유받은 일기 관계
-  has_many :shared_diaries, through: :diary_users, source: :diary  # 공유받은 일기들
 
   # 커플 관계
   has_many :couple_invitations, foreign_key: :inviter_id, dependent: :destroy  # 보낸 초대

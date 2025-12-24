@@ -17,14 +17,6 @@ class DiarySerializer
         profileImage: diary.user.profile_image
       },
       isOwner: current_user ? diary.owned_by?(current_user) : false,
-      sharedUsers: diary.shared_users.map { |user|
-        {
-          id: user.id,
-          name: user.name,
-          profileImage: user.profile_image,
-          role: diary.diary_users.find_by(user: user)&.role
-        }
-      },
       createdAt: diary.created_at.iso8601,
       updatedAt: diary.updated_at.iso8601
     }

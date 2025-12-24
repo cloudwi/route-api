@@ -31,23 +31,7 @@ Rails.application.routes.draw do
       end
 
       # 일기 관리
-      resources :diaries do
-        member do
-          post :share      # POST /api/v1/diaries/:id/share
-          delete :unshare  # DELETE /api/v1/diaries/:id/unshare
-        end
-      end
-
-      # 일기 질문 프롬프트
-      resources :diary_prompts, only: [ :index ] do
-        collection do
-          get :random       # GET /api/v1/diary_prompts/random
-          get :categories   # GET /api/v1/diary_prompts/categories
-        end
-      end
-
-      # 이미지 업로드 관리
-      resources :images, only: [ :create, :show, :destroy ]
+      resources :diaries
     end
   end
 

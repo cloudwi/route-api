@@ -7,9 +7,9 @@ module Api
       before_action :check_ownership, only: [ :update, :destroy ]
 
       # GET /api/v1/diaries
-      # 내 일기 목록 조회 (작성한 일기 + 공유받은 일기)
+      # 내 일기 목록 조회
       def index
-        diaries = Diary.accessible_by(current_user).recent
+        diaries = current_user.diaries.recent
 
         render json: DiarySerializer.serialize_simple_collection(diaries, current_user: current_user), status: :ok
       end
@@ -65,65 +65,11 @@ module Api
         head :no_content
       end
 
-      # POST /api/v1/diaries/:id/share
-      # 일기 공유
-      def share
-        @diary = Diary.find(params[:id])
-
-        # 소유자만 공유 가능
-        unless @diary.owned_by?(current_user)
-          return render json: { error: "Only the owner can share this diary" }, status: :forbidden
-        end
-
-        # 공유할 사용자 찾기
-        share_user = User.find_by(id: params[:user_id])
-        unless share_user
-          return render json: { error: "User not found" }, status: :not_found
-        end
-
-        # 자기 자신과는 공유 불가
-        if share_user.id == current_user.id
-          return render json: { error: "Cannot share with yourself" }, status: :unprocessable_entity
-        end
-
-        # 공유 실행
-        diary_user = @diary.share_with(share_user, role: params[:role] || "viewer")
-
-        if diary_user.persisted?
-          render json: { message: "Diary shared successfully", diary_user: diary_user }, status: :ok
-        else
-          render json: { error: "Failed to share diary", messages: diary_user.errors.full_messages }, status: :unprocessable_entity
-        end
-      end
-
-      # DELETE /api/v1/diaries/:id/unshare
-      # 일기 공유 해제
-      def unshare
-        @diary = Diary.find(params[:id])
-
-        # 소유자만 공유 해제 가능
-        unless @diary.owned_by?(current_user)
-          return render json: { error: "Only the owner can unshare this diary" }, status: :forbidden
-        end
-
-        share_user = User.find_by(id: params[:user_id])
-        unless share_user
-          return render json: { error: "User not found" }, status: :not_found
-        end
-
-        @diary.unshare_with(share_user)
-        render json: { message: "Diary unshared successfully" }, status: :ok
-      end
-
       private
 
-      # 조회용: 접근 권한 체크 (소유자 또는 공유받은 사용자)
+      # 조회용: 소유자만 접근 가능
       def set_diary_with_access_check
-        @diary = Diary.find(params[:id])
-
-        unless @diary.accessible_by?(current_user)
-          render json: { error: "Diary not found or you don't have access" }, status: :not_found
-        end
+        @diary = current_user.diaries.find(params[:id])
       rescue ActiveRecord::RecordNotFound
         render json: { error: "Diary not found or you don't have access" }, status: :not_found
       end

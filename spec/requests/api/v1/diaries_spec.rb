@@ -79,7 +79,6 @@ RSpec.describe "Diaries API", type: :request do
                    }
                  },
                  isOwner: { type: :boolean },
-                 sharedUsers: { type: :array, items: { type: :object } },
                  createdAt: { type: :string, format: "date-time" },
                  updatedAt: { type: :string, format: "date-time" }
                }
@@ -126,18 +125,6 @@ RSpec.describe "Diaries API", type: :request do
                    }
                  },
                  isOwner: { type: :boolean },
-                 sharedUsers: {
-                   type: :array,
-                   items: {
-                     type: :object,
-                     properties: {
-                       id: { type: :integer },
-                       name: { type: :string },
-                       profileImage: { type: :string, nullable: true },
-                       role: { type: :string }
-                     }
-                   }
-                 },
                  createdAt: { type: :string, format: "date-time" },
                  updatedAt: { type: :string, format: "date-time" }
                }
@@ -194,18 +181,6 @@ RSpec.describe "Diaries API", type: :request do
                    }
                  },
                  isOwner: { type: :boolean },
-                 sharedUsers: {
-                   type: :array,
-                   items: {
-                     type: :object,
-                     properties: {
-                       id: { type: :integer },
-                       name: { type: :string },
-                       profileImage: { type: :string, nullable: true },
-                       role: { type: :string }
-                     }
-                   }
-                 },
                  createdAt: { type: :string, format: "date-time" },
                  updatedAt: { type: :string, format: "date-time" }
                }
@@ -250,111 +225,6 @@ RSpec.describe "Diaries API", type: :request do
 
       response "404", "일기 없음" do
         let(:id) { 99999 }
-        run_test!
-      end
-    end
-  end
-
-  path "/api/v1/diaries/{id}/share" do
-    parameter name: :id, in: :path, type: :integer, description: "일기 ID"
-
-    post "일기 공유" do
-      tags "일기"
-      description "일기를 다른 사용자와 공유합니다. 소유자만 공유 가능합니다."
-      consumes "application/json"
-      produces "application/json"
-      security [ bearer_auth: [] ]
-
-      parameter name: :share_params, in: :body, schema: {
-        type: :object,
-        properties: {
-          user_id: { type: :integer, description: "공유할 사용자 ID" },
-          role: { type: :string, description: "권한 (viewer, editor)", default: "viewer" }
-        },
-        required: [ "user_id" ]
-      }
-
-      response "200", "공유 성공" do
-        schema type: :object,
-               properties: {
-                 message: { type: :string },
-                 diary_user: { type: :object }
-               }
-
-        let(:diary_record) { Diary.create!(user: user, title: "테스트 일기", content: "테스트 내용") }
-        let(:id) { diary_record.id }
-        let(:share_params) { { user_id: other_user.id, role: "viewer" } }
-        run_test!
-      end
-
-      response "403", "권한 없음 (소유자 아님)" do
-        let(:diary_record) { Diary.create!(user: other_user, title: "다른 사람 일기", content: "내용") }
-        let(:id) { diary_record.id }
-        let(:share_params) { { user_id: user.id } }
-        run_test!
-      end
-
-      response "404", "사용자 없음" do
-        let(:diary_record) { Diary.create!(user: user, title: "테스트 일기", content: "테스트 내용") }
-        let(:id) { diary_record.id }
-        let(:share_params) { { user_id: 99999 } }
-        run_test!
-      end
-
-      response "422", "자기 자신과 공유 시도" do
-        let(:diary_record) { Diary.create!(user: user, title: "테스트 일기", content: "테스트 내용") }
-        let(:id) { diary_record.id }
-        let(:share_params) { { user_id: user.id } }
-        run_test!
-      end
-    end
-  end
-
-  path "/api/v1/diaries/{id}/unshare" do
-    parameter name: :id, in: :path, type: :integer, description: "일기 ID"
-
-    delete "일기 공유 해제" do
-      tags "일기"
-      description "일기 공유를 해제합니다. 소유자만 해제 가능합니다."
-      consumes "application/json"
-      produces "application/json"
-      security [ bearer_auth: [] ]
-
-      parameter name: :unshare_params, in: :body, schema: {
-        type: :object,
-        properties: {
-          user_id: { type: :integer, description: "공유 해제할 사용자 ID" }
-        },
-        required: [ "user_id" ]
-      }
-
-      response "200", "공유 해제 성공" do
-        schema type: :object,
-               properties: {
-                 message: { type: :string }
-               }
-
-        let(:diary_record) do
-          diary = Diary.create!(user: user, title: "테스트 일기", content: "테스트 내용")
-          diary.share_with(other_user)
-          diary
-        end
-        let(:id) { diary_record.id }
-        let(:unshare_params) { { user_id: other_user.id } }
-        run_test!
-      end
-
-      response "403", "권한 없음" do
-        let(:diary_record) { Diary.create!(user: other_user, title: "다른 사람 일기", content: "내용") }
-        let(:id) { diary_record.id }
-        let(:unshare_params) { { user_id: user.id } }
-        run_test!
-      end
-
-      response "404", "사용자 없음" do
-        let(:diary_record) { Diary.create!(user: user, title: "테스트 일기", content: "테스트 내용") }
-        let(:id) { diary_record.id }
-        let(:unshare_params) { { user_id: 99999 } }
         run_test!
       end
     end

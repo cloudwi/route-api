@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_24_065510) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_24_090356) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -71,55 +71,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_24_065510) do
     t.index ["user_id"], name: "index_diaries_on_user_id"
   end
 
-  create_table "diary_prompts", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.string "category", comment: "질문 카테고리 (감정, 일상, 관계, 미래 등)"
-    t.text "content", null: false, comment: "일기 질문 내용"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["category"], name: "index_diary_prompts_on_category"
-  end
-
-  create_table "diary_users", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.bigint "diary_id", null: false
-    t.string "role", default: "viewer", null: false, comment: "owner, editor, viewer"
-    t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
-    t.index ["diary_id"], name: "index_diary_users_on_diary_id"
-    t.index ["user_id", "diary_id"], name: "index_diary_users_on_user_id_and_diary_id", unique: true
-    t.index ["user_id"], name: "index_diary_users_on_user_id"
-  end
-
-  create_table "images", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.string "purpose", comment: "이미지 용도 (place_thumbnail, profile, etc.)"
-    t.datetime "updated_at", null: false
-    t.bigint "user_id"
-    t.index ["created_at"], name: "index_images_on_created_at"
-    t.index ["user_id"], name: "index_images_on_user_id"
-  end
-
-  create_table "places", id: { comment: "장소 고유 식별자" }, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.string "address", comment: "지번 주소"
-    t.string "category", comment: "장소 카테고리 (예: 카페, 음식점)"
-    t.datetime "created_at", null: false, comment: "생성 일시"
-    t.decimal "latitude", precision: 10, scale: 7, comment: "위도"
-    t.decimal "longitude", precision: 10, scale: 7, comment: "경도"
-    t.string "name", comment: "장소 이름"
-    t.string "naver_map_url", comment: "네이버 지도 URL"
-    t.string "naver_place_id", comment: "네이버 장소 고유 ID"
-    t.string "road_address", comment: "도로명 주소"
-    t.string "telephone", comment: "전화번호"
-    t.datetime "updated_at", null: false, comment: "수정 일시"
-    t.bigint "user_id", null: false, comment: "소유자 사용자 ID"
-    t.integer "views_count", default: 0, null: false, comment: "조회수"
-    t.index ["category"], name: "index_places_on_category"
-    t.index ["name"], name: "index_places_on_name"
-    t.index ["user_id", "naver_place_id"], name: "index_places_on_user_id_and_naver_place_id", unique: true
-    t.index ["user_id"], name: "index_places_on_user_id"
-    t.index ["views_count"], name: "index_places_on_views_count"
-  end
-
   create_table "users", id: { comment: "사용자 고유 식별자" }, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.datetime "created_at", null: false, comment: "생성 일시"
     t.string "email", comment: "사용자 이메일 주소"
@@ -138,8 +89,4 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_24_065510) do
   add_foreign_key "couples", "users", column: "user1_id"
   add_foreign_key "couples", "users", column: "user2_id"
   add_foreign_key "diaries", "users"
-  add_foreign_key "diary_users", "diaries"
-  add_foreign_key "diary_users", "users"
-  add_foreign_key "images", "users"
-  add_foreign_key "places", "users"
 end
