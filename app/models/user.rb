@@ -22,6 +22,9 @@
 class User < ApplicationRecord
   # Associations
   has_many :places, dependent: :destroy   # 사용자가 저장한 장소들
+  has_many :diaries, dependent: :destroy  # 사용자가 작성한 일기들
+  has_many :diary_users, dependent: :destroy  # 공유받은 일기 관계
+  has_many :shared_diaries, through: :diary_users, source: :diary  # 공유받은 일기들
 
   # Validations
   validates :provider, presence: true                                      # OAuth 제공자는 필수

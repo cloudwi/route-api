@@ -30,6 +30,17 @@ Rails.application.routes.draw do
 
       # 장소 관리
       resources :places, only: [ :index, :show ]
+
+      # 일기 관리
+      resources :diaries do
+        member do
+          post :share      # POST /api/v1/diaries/:id/share
+          delete :unshare  # DELETE /api/v1/diaries/:id/unshare
+        end
+      end
+
+      # 이미지 업로드 관리
+      resources :images, only: [ :create, :show, :destroy ]
     end
   end
 

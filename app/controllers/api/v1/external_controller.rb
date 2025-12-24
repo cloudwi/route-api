@@ -3,7 +3,7 @@ module Api
     # 외부 장소 검색 API 컨트롤러
     # 네이버 로컬 검색 API를 프록시하여 클라이언트에 제공
     class ExternalController < ApplicationController
-      # 로그인 불필요 - 공개 검색 API
+      before_action :require_login
 
       # GET /api/v1/external/search?query=스타벅스 강남역
       # 외부 API로 장소를 검색하여 결과를 반환
