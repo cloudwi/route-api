@@ -1,7 +1,5 @@
 class Place < ApplicationRecord
   belongs_to :user
-  has_many :place_likes, dependent: :destroy
-  has_many :liked_by_users, through: :place_likes, source: :user
 
   validates :name, presence: true, length: { minimum: 1, maximum: 255 }
   validates :latitude, presence: true, numericality: {
@@ -16,17 +14,10 @@ class Place < ApplicationRecord
   }
   validates :naver_place_id, uniqueness: { scope: :user_id }, allow_blank: true
   validates :views_count, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
-  validates :likes_count, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
 
   # 조회수 증가
   def increment_views!
     increment!(:views_count)
-  end
-
-  # 특정 사용자가 좋아요 했는지 확인
-  def liked_by?(user)
-    return false unless user
-    place_likes.exists?(user: user)
   end
 
   # 네이버 장소 ID로 기존 장소 조회 또는 새로 생성

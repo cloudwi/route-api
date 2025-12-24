@@ -7,15 +7,9 @@ module Api
       # GET /api/v1/places
       # 내 장소 목록 조회
       def index
-        # N+1 방지: place_likes를 미리 로드
-        places = current_user.places
-          .left_joins(:place_likes)
-          .select("places.*, place_likes.id as current_user_like_id")
-          .where("place_likes.user_id = ? OR place_likes.user_id IS NULL", current_user.id)
-          .order(created_at: :desc)
-          .distinct
+        places = current_user.places.order(created_at: :desc)
 
-        render json: PlaceSerializer.serialize_collection(places, current_user: current_user), status: :ok
+        render json: PlaceSerializer.serialize_collection(places), status: :ok
       end
 
       # GET /api/v1/places/:id
@@ -23,17 +17,7 @@ module Api
       def show
         @place.increment_views!
 
-        render json: PlaceSerializer.serialize(@place, current_user: current_user), status: :ok
-      end
-
-      # GET /api/v1/places/liked
-      # 좋아요한 장소 목록
-      def liked
-        places = current_user.liked_places
-          .includes(:place_likes)
-          .order("place_likes.created_at DESC")
-
-        render json: PlaceSerializer.serialize_collection(places, current_user: current_user), status: :ok
+        render json: PlaceSerializer.serialize(@place), status: :ok
       end
 
       private

@@ -10,23 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_24_020000) do
-  create_table "place_likes", id: { comment: "좋아요 고유 식별자" }, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.datetime "created_at", null: false, comment: "생성 일시"
-    t.bigint "place_id", null: false, comment: "좋아요 대상 장소 ID"
-    t.datetime "updated_at", null: false, comment: "수정 일시"
-    t.bigint "user_id", null: false, comment: "좋아요 누른 사용자 ID"
-    t.index ["place_id"], name: "index_place_likes_on_place_id"
-    t.index ["user_id", "place_id"], name: "index_place_likes_on_user_id_and_place_id", unique: true
-    t.index ["user_id"], name: "index_place_likes_on_user_id"
-  end
-
+ActiveRecord::Schema[8.1].define(version: 2025_12_24_020237) do
   create_table "places", id: { comment: "장소 고유 식별자" }, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "address", comment: "지번 주소"
     t.string "category", comment: "장소 카테고리 (예: 카페, 음식점)"
     t.datetime "created_at", null: false, comment: "생성 일시"
     t.decimal "latitude", precision: 10, scale: 7, comment: "위도"
-    t.integer "likes_count", default: 0, null: false, comment: "좋아요 수"
     t.decimal "longitude", precision: 10, scale: 7, comment: "경도"
     t.string "name", comment: "장소 이름"
     t.string "naver_map_url", comment: "네이버 지도 URL"
@@ -37,7 +26,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_24_020000) do
     t.bigint "user_id", null: false, comment: "소유자 사용자 ID"
     t.integer "views_count", default: 0, null: false, comment: "조회수"
     t.index ["category"], name: "index_places_on_category"
-    t.index ["likes_count", "created_at"], name: "index_places_on_popularity"
     t.index ["name"], name: "index_places_on_name"
     t.index ["user_id", "naver_place_id"], name: "index_places_on_user_id_and_naver_place_id", unique: true
     t.index ["user_id"], name: "index_places_on_user_id"
@@ -56,7 +44,5 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_24_020000) do
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
   end
 
-  add_foreign_key "place_likes", "places"
-  add_foreign_key "place_likes", "users"
   add_foreign_key "places", "users"
 end

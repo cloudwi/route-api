@@ -3,10 +3,10 @@
 class PlaceSerializer
   # 기본 장소 정보를 JSON으로 변환
   # @param place [Place] 직렬화할 장소 객체
-  # @param current_user [User, nil] 현재 로그인한 사용자 (좋아요 상태 확인용, 선택사항)
+  # @param current_user [User, nil] 현재 로그인한 사용자 (선택사항, 미사용)
   # @return [Hash] JSON 형식의 장소 데이터
   def self.serialize(place, current_user: nil)
-    base_data = {
+    {
       id: place.id,
       naverPlaceId: place.naver_place_id,
       name: place.name,
@@ -18,16 +18,8 @@ class PlaceSerializer
       telephone: place.telephone,
       naverMapUrl: place.naver_map_url,
       viewsCount: place.views_count,
-      likesCount: place.likes_count,
       createdAt: place.created_at.iso8601
     }
-
-    # 현재 사용자가 있는 경우 좋아요 상태 추가
-    if current_user
-      base_data[:liked] = place.liked_by?(current_user)
-    end
-
-    base_data
   end
 
   # 여러 장소를 한 번에 직렬화

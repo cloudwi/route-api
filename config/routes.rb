@@ -29,12 +29,7 @@ Rails.application.routes.draw do
       get "external/search", to: "external#search"  # GET /api/v1/external/search?query=스타벅스 강남역
 
       # 장소 관리
-      resources :places, only: [ :index, :show ] do
-        resource :likes, only: [ :create ], controller: "place_likes"  # POST /api/v1/places/:id/likes - 좋아요 토글
-        collection do
-          get :liked    # GET /api/v1/places/liked - 좋아요한 장소 목록
-        end
-      end
+      resources :places, only: [ :index, :show ]
     end
   end
 

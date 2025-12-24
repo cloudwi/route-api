@@ -47,45 +47,6 @@ RSpec.describe "Places API", type: :request do
     end
   end
 
-  path "/api/v1/places/liked" do
-    get "좋아요한 장소 목록" do
-      tags "장소"
-      description "현재 사용자가 좋아요한 장소 목록을 조회합니다"
-      produces "application/json"
-      security [ bearer_auth: [] ]
-
-      response "200", "조회 성공" do
-        schema type: :array,
-               items: {
-                 type: :object,
-                 properties: {
-                   id: { type: :integer },
-                   naverPlaceId: { type: :string },
-                   name: { type: :string },
-                   address: { type: :string },
-                   roadAddress: { type: :string },
-                   lat: { type: :number },
-                   lng: { type: :number },
-                   category: { type: :string },
-                   telephone: { type: :string },
-                   naverMapUrl: { type: :string },
-                   viewsCount: { type: :integer },
-                   likesCount: { type: :integer },
-                   liked: { type: :boolean },
-                   createdAt: { type: :string, format: "date-time" }
-                 }
-               }
-
-        run_test!
-      end
-
-      response "401", "인증 실패" do
-        let(:Authorization) { "" }
-        run_test!
-      end
-    end
-  end
-
   path "/api/v1/places/{id}" do
     parameter name: :id, in: :path, type: :integer, description: "장소 ID"
 
@@ -128,42 +89,6 @@ RSpec.describe "Places API", type: :request do
         let(:Authorization) { "" }
         let(:place) { Place.create!(user: user, naver_place_id: "place123", name: "테스트 장소", latitude: 37.5, longitude: 127.0, address: "서울") }
         let(:id) { place.id }
-        run_test!
-      end
-    end
-  end
-
-  path "/api/v1/places/{place_id}/likes" do
-    parameter name: :place_id, in: :path, type: :integer, description: "장소 ID"
-
-    post "좋아요 토글" do
-      tags "장소"
-      description "장소에 좋아요를 추가하거나 취소합니다"
-      produces "application/json"
-      security [ bearer_auth: [] ]
-
-      response "200", "성공" do
-        schema type: :object,
-               properties: {
-                 message: { type: :string, description: "결과 메시지" },
-                 likes_count: { type: :integer, description: "현재 좋아요 수" },
-                 liked: { type: :boolean, description: "좋아요 상태" }
-               }
-
-        let(:place) { Place.create!(user: user, naver_place_id: "place123", name: "테스트 장소", latitude: 37.5, longitude: 127.0, address: "서울") }
-        let(:place_id) { place.id }
-        run_test!
-      end
-
-      response "404", "장소 없음" do
-        let(:place_id) { 99999 }
-        run_test!
-      end
-
-      response "401", "인증 실패" do
-        let(:Authorization) { "" }
-        let(:place) { Place.create!(user: user, naver_place_id: "place123", name: "테스트 장소", latitude: 37.5, longitude: 127.0, address: "서울") }
-        let(:place_id) { place.id }
         run_test!
       end
     end

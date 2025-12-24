@@ -138,65 +138,10 @@ paths:
                     viewsCount:
                       type: integer
                       description: 조회수
-                    likesCount:
-                      type: integer
-                      description: 좋아요 수
-                    liked:
-                      type: boolean
-                      description: 좋아요 여부
                     createdAt:
                       type: string
                       format: date-time
                       description: 생성일시
-        '401':
-          description: 인증 실패
-  "/api/v1/places/liked":
-    get:
-      summary: 좋아요한 장소 목록
-      tags:
-      - 장소
-      description: 현재 사용자가 좋아요한 장소 목록을 조회합니다
-      security:
-      - bearer_auth: []
-      responses:
-        '200':
-          description: 조회 성공
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    naverPlaceId:
-                      type: string
-                    name:
-                      type: string
-                    address:
-                      type: string
-                    roadAddress:
-                      type: string
-                    lat:
-                      type: number
-                    lng:
-                      type: number
-                    category:
-                      type: string
-                    telephone:
-                      type: string
-                    naverMapUrl:
-                      type: string
-                    viewsCount:
-                      type: integer
-                    likesCount:
-                      type: integer
-                    liked:
-                      type: boolean
-                    createdAt:
-                      type: string
-                      format: date-time
         '401':
           description: 인증 실패
   "/api/v1/places/{id}":
@@ -249,49 +194,9 @@ paths:
                     nullable: true
                   viewsCount:
                     type: integer
-                  likesCount:
-                    type: integer
-                  liked:
-                    type: boolean
                   createdAt:
                     type: string
                     format: date-time
-        '404':
-          description: 장소 없음
-        '401':
-          description: 인증 실패
-  "/api/v1/places/{place_id}/likes":
-    parameters:
-    - name: place_id
-      in: path
-      description: 장소 ID
-      required: true
-      schema:
-        type: integer
-    post:
-      summary: 좋아요 토글
-      tags:
-      - 장소
-      description: 장소에 좋아요를 추가하거나 취소합니다
-      security:
-      - bearer_auth: []
-      responses:
-        '200':
-          description: 성공
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    description: 결과 메시지
-                  likes_count:
-                    type: integer
-                    description: 현재 좋아요 수
-                  liked:
-                    type: boolean
-                    description: 좋아요 상태
         '404':
           description: 장소 없음
         '401':
@@ -301,7 +206,7 @@ paths:
       summary: 인기 장소 조회
       tags:
       - 장소
-      description: 인기 장소 Top 5를 조회합니다 (조회수 + 좋아요 * 3 기준)
+      description: 인기 장소 Top 5를 조회합니다 (조회수 기준)
       responses:
         '200':
           description: 조회 성공
@@ -348,9 +253,6 @@ paths:
                         viewsCount:
                           type: integer
                           description: 조회수
-                        likesCount:
-                          type: integer
-                          description: 좋아요 수
                         popularityScore:
                           type: number
                           description: 인기 점수

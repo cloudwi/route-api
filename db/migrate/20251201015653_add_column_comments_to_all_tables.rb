@@ -32,16 +32,8 @@ class AddColumnCommentsToAllTables < ActiveRecord::Migration[8.1]
     change_column_comment :places, :telephone, "전화번호"
     change_column_comment :places, :naver_map_url, "네이버 지도 URL"
     change_column_comment :places, :views_count, "조회수"
-    change_column_comment :places, :likes_count, "좋아요 수"
     change_column_comment :places, :created_at, "생성 일시"
     change_column_comment :places, :updated_at, "수정 일시"
-
-    # place_likes 테이블
-    change_column_comment :place_likes, :id, "좋아요 고유 식별자"
-    change_column_comment :place_likes, :user_id, "좋아요 누른 사용자 ID"
-    change_column_comment :place_likes, :place_id, "좋아요 대상 장소 ID"
-    change_column_comment :place_likes, :created_at, "생성 일시"
-    change_column_comment :place_likes, :updated_at, "수정 일시"
   end
 
   def down
@@ -77,15 +69,7 @@ class AddColumnCommentsToAllTables < ActiveRecord::Migration[8.1]
     change_column_comment :places, :telephone, nil
     change_column_comment :places, :naver_map_url, nil
     change_column_comment :places, :views_count, nil
-    change_column_comment :places, :likes_count, nil
     change_column_comment :places, :created_at, nil
     change_column_comment :places, :updated_at, nil
-
-    # place_likes 테이블
-    change_column_comment :place_likes, :id, nil
-    change_column_comment :place_likes, :user_id, nil
-    change_column_comment :place_likes, :place_id, nil
-    change_column_comment :place_likes, :created_at, nil
-    change_column_comment :place_likes, :updated_at, nil
   end
 end
