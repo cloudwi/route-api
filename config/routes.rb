@@ -22,20 +22,27 @@ Rails.application.routes.draw do
 
     # v1 API 엔드포인트
     namespace :v1 do
-      # 인기 장소 (로그인 불필요)
-      get "popular_places", to: "popular_places#index"  # GET /api/v1/popular_places
-
-      # 외부 장소 검색 (네이버 API, 로그인 필요)
-      get "external/search", to: "external#search"  # GET /api/v1/external/search?query=스타벅스 강남역
-
-      # 장소 관리
-      resources :places, only: [ :index, :show ]
+      # 커플 관리
+      resource :couple, only: [ :show, :destroy ]  # GET /api/v1/couple, DELETE /api/v1/couple
+      resources :couple_invitations, only: [ :create ] do
+        member do
+          post :accept  # POST /api/v1/couple_invitations/:token/accept
+        end
+      end
 
       # 일기 관리
       resources :diaries do
         member do
           post :share      # POST /api/v1/diaries/:id/share
           delete :unshare  # DELETE /api/v1/diaries/:id/unshare
+        end
+      end
+
+      # 일기 질문 프롬프트
+      resources :diary_prompts, only: [ :index ] do
+        collection do
+          get :random       # GET /api/v1/diary_prompts/random
+          get :categories   # GET /api/v1/diary_prompts/categories
         end
       end
 

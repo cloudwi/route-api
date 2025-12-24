@@ -1,0 +1,2 @@
+class DiaryPrompt < ApplicationRecord
+end

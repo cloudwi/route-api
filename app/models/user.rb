@@ -21,10 +21,27 @@
 # OAuth 인증(Kakao 등)을 통해 생성되며, JWT 인증에 사용됨
 class User < ApplicationRecord
   # Associations
-  has_many :places, dependent: :destroy   # 사용자가 저장한 장소들
   has_many :diaries, dependent: :destroy  # 사용자가 작성한 일기들
   has_many :diary_users, dependent: :destroy  # 공유받은 일기 관계
   has_many :shared_diaries, through: :diary_users, source: :diary  # 공유받은 일기들
+
+  # 커플 관계
+  has_many :couple_invitations, foreign_key: :inviter_id, dependent: :destroy  # 보낸 초대
+
+  # 사용자의 커플 찾기
+  def couple
+    Couple.for_user(id).first
+  end
+
+  # 파트너 찾기
+  def partner
+    couple&.partner_for(self)
+  end
+
+  # 커플 관계 확인
+  def in_couple?
+    couple.present?
+  end
 
   # Validations
   validates :provider, presence: true                                      # OAuth 제공자는 필수

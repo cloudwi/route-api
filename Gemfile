@@ -71,9 +71,6 @@ gem "omniauth"
 gem "omniauth-oauth2"
 gem "omniauth-rails_csrf_protection"
 
-# HTTP client for external API calls
-gem "httparty"
-
 # API documentation with Swagger UI
 gem "rswag-api"
 gem "rswag-ui"
