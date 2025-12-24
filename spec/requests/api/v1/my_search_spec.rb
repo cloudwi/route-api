@@ -4,16 +4,16 @@ require "swagger_helper"
 
 RSpec.describe "My Search API", type: :request do
   path "/api/v1/my_search" do
-    get "내부 장소/코스 검색" do
+    get "내부 장소 검색" do
       tags "검색"
-      description "저장된 장소와 코스를 검색합니다"
+      description "저장된 장소를 검색합니다"
       produces "application/json"
 
       parameter name: :q, in: :query, type: :string, required: false, description: "검색 키워드"
       parameter name: :category, in: :query, type: :string, required: false, description: "카테고리 필터 (장소 검색에만 적용)"
       parameter name: :type, in: :query, type: :string, required: false,
-                enum: [ "all", "places", "courses" ],
-                description: "검색 타입 (all: 전체, places: 장소만, courses: 코스만)"
+                enum: [ "places" ],
+                description: "검색 타입 (places: 장소만 검색)"
       parameter name: :limit, in: :query, type: :integer, required: false, description: "결과 개수 제한 (1-100, 기본값: 20)"
 
       response "200", "검색 성공" do
@@ -36,31 +36,6 @@ RSpec.describe "My Search API", type: :request do
                        naverMapUrl: { type: :string, description: "네이버 지도 URL" },
                        viewsCount: { type: :integer, description: "조회수" },
                        likesCount: { type: :integer, description: "좋아요 수" },
-                       createdAt: { type: :string, format: "date-time", description: "생성일시" }
-                     }
-                   }
-                 },
-                 courses: {
-                   type: :array,
-                   items: {
-                     type: :object,
-                     properties: {
-                       id: { type: :integer, description: "코스 ID" },
-                       name: { type: :string, description: "코스 이름" },
-                       placesCount: { type: :integer, description: "장소 개수" },
-                       places: {
-                         type: :array,
-                         items: {
-                           type: :object,
-                           properties: {
-                             id: { type: :string, description: "네이버 장소 ID" },
-                             name: { type: :string, description: "장소명" },
-                             category: { type: :string, description: "카테고리" },
-                             lat: { type: :number, description: "위도" },
-                             lng: { type: :number, description: "경도" }
-                           }
-                         }
-                       },
                        createdAt: { type: :string, format: "date-time", description: "생성일시" }
                      }
                    }

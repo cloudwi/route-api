@@ -19,13 +19,6 @@ class AddColumnCommentsToAllTables < ActiveRecord::Migration[8.1]
     change_column_comment :folders, :created_at, "생성 일시"
     change_column_comment :folders, :updated_at, "수정 일시"
 
-    # courses 테이블
-    change_column_comment :courses, :id, "코스 고유 식별자"
-    change_column_comment :courses, :name, "코스 이름"
-    change_column_comment :courses, :user_id, "소유자 사용자 ID"
-    change_column_comment :courses, :created_at, "생성 일시"
-    change_column_comment :courses, :updated_at, "수정 일시"
-
     # places 테이블
     change_column_comment :places, :id, "장소 고유 식별자"
     change_column_comment :places, :user_id, "소유자 사용자 ID"
@@ -42,14 +35,6 @@ class AddColumnCommentsToAllTables < ActiveRecord::Migration[8.1]
     change_column_comment :places, :likes_count, "좋아요 수"
     change_column_comment :places, :created_at, "생성 일시"
     change_column_comment :places, :updated_at, "수정 일시"
-
-    # course_places 테이블
-    change_column_comment :course_places, :id, "코스-장소 연결 고유 식별자"
-    change_column_comment :course_places, :course_id, "코스 ID"
-    change_column_comment :course_places, :place_id, "장소 ID"
-    change_column_comment :course_places, :position, "코스 내 장소 순서 (0부터 시작)"
-    change_column_comment :course_places, :created_at, "생성 일시"
-    change_column_comment :course_places, :updated_at, "수정 일시"
 
     # place_likes 테이블
     change_column_comment :place_likes, :id, "좋아요 고유 식별자"
@@ -79,13 +64,6 @@ class AddColumnCommentsToAllTables < ActiveRecord::Migration[8.1]
     change_column_comment :folders, :created_at, nil
     change_column_comment :folders, :updated_at, nil
 
-    # courses 테이블
-    change_column_comment :courses, :id, nil
-    change_column_comment :courses, :name, nil
-    change_column_comment :courses, :user_id, nil
-    change_column_comment :courses, :created_at, nil
-    change_column_comment :courses, :updated_at, nil
-
     # places 테이블
     change_column_comment :places, :id, nil
     change_column_comment :places, :user_id, nil
@@ -102,14 +80,6 @@ class AddColumnCommentsToAllTables < ActiveRecord::Migration[8.1]
     change_column_comment :places, :likes_count, nil
     change_column_comment :places, :created_at, nil
     change_column_comment :places, :updated_at, nil
-
-    # course_places 테이블
-    change_column_comment :course_places, :id, nil
-    change_column_comment :course_places, :course_id, nil
-    change_column_comment :course_places, :place_id, nil
-    change_column_comment :course_places, :position, nil
-    change_column_comment :course_places, :created_at, nil
-    change_column_comment :course_places, :updated_at, nil
 
     # place_likes 테이블
     change_column_comment :place_likes, :id, nil
