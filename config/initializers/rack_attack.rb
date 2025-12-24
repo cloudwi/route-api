@@ -35,8 +35,7 @@ class Rack::Attack
 
   # 검색 API 제한 (IP당 1분에 30회)
   throttle("search/ip", limit: 30, period: 1.minute) do |req|
-    if req.path.start_with?("/api/v1/external/search") ||
-       req.path.start_with?("/api/v1/my_search")
+    if req.path.start_with?("/api/v1/external/search")
       req.ip
     end
   end
