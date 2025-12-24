@@ -28,12 +28,9 @@ Rails.application.routes.draw do
       # 외부 장소 검색 (네이버 API, 로그인 필요)
       get "external/search", to: "external#search"  # GET /api/v1/external/search?query=스타벅스 강남역
 
-      # 내 장소/코스 검색 (로그인 불필요)
+      # 내 장소 검색 (로그인 불필요)
       get "my_search", to: "my_search#index"  # GET /api/v1/my_search?q=카페&category=카페
       get "my_search/categories", to: "my_search#categories"  # GET /api/v1/my_search/categories
-
-      # 코스 관리
-      resources :courses, only: [ :index, :show, :create, :destroy ]
 
       # 장소 관리
       resources :places, only: [ :index, :show ] do

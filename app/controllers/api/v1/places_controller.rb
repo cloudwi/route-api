@@ -7,9 +7,15 @@ module Api
       # GET /api/v1/places
       # 내 장소 목록 조회
       def index
-        places = current_user.places.order(created_at: :desc)
+        # N+1 방지: place_likes를 미리 로드
+        places = current_user.places
+          .left_joins(:place_likes)
+          .select("places.*, place_likes.id as current_user_like_id")
+          .where("place_likes.user_id = ? OR place_likes.user_id IS NULL", current_user.id)
+          .order(created_at: :desc)
+          .distinct
 
-        render json: places.map { |place| format_place(place) }, status: :ok
+        render json: PlaceSerializer.serialize_collection(places, current_user: current_user), status: :ok
       end
 
       # GET /api/v1/places/:id
@@ -17,42 +23,23 @@ module Api
       def show
         @place.increment_views!
 
-        render json: format_place(@place), status: :ok
+        render json: PlaceSerializer.serialize(@place, current_user: current_user), status: :ok
       end
 
       # GET /api/v1/places/liked
       # 좋아요한 장소 목록
       def liked
-        places = current_user.liked_places.order("place_likes.created_at DESC")
+        places = current_user.liked_places
+          .includes(:place_likes)
+          .order("place_likes.created_at DESC")
 
-        render json: places.map { |place| format_place(place) }, status: :ok
+        render json: PlaceSerializer.serialize_collection(places, current_user: current_user), status: :ok
       end
 
       private
 
       def set_place
         @place = current_user.places.find(params[:id])
-      rescue ActiveRecord::RecordNotFound
-        render json: { error: "Place not found" }, status: :not_found
-      end
-
-      def format_place(place)
-        {
-          id: place.id,
-          naverPlaceId: place.naver_place_id,
-          name: place.name,
-          address: place.address,
-          roadAddress: place.road_address,
-          lat: place.latitude.to_f,
-          lng: place.longitude.to_f,
-          category: place.category,
-          telephone: place.telephone,
-          naverMapUrl: place.naver_map_url,
-          viewsCount: place.views_count,
-          likesCount: place.likes_count,
-          liked: place.liked_by?(current_user),
-          createdAt: place.created_at.iso8601
-        }
       end
     end
   end

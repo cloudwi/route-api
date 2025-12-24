@@ -10,25 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_01_233835) do
-  create_table "course_places", id: { comment: "코스-장소 연결 고유 식별자" }, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "course_id", null: false, comment: "코스 ID"
-    t.datetime "created_at", null: false, comment: "생성 일시"
-    t.bigint "place_id", comment: "장소 ID"
-    t.integer "position", comment: "코스 내 장소 순서 (0부터 시작)"
-    t.datetime "updated_at", null: false, comment: "수정 일시"
-    t.index ["course_id"], name: "index_course_places_on_course_id"
-    t.index ["place_id"], name: "index_course_places_on_place_id"
-  end
-
-  create_table "courses", id: { comment: "코스 고유 식별자" }, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.datetime "created_at", null: false, comment: "생성 일시"
-    t.string "name", comment: "코스 이름"
-    t.datetime "updated_at", null: false, comment: "수정 일시"
-    t.bigint "user_id", null: false, comment: "소유자 사용자 ID"
-    t.index ["user_id"], name: "index_courses_on_user_id"
-  end
-
+ActiveRecord::Schema[8.1].define(version: 2025_12_24_020000) do
   create_table "place_likes", id: { comment: "좋아요 고유 식별자" }, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.datetime "created_at", null: false, comment: "생성 일시"
     t.bigint "place_id", null: false, comment: "좋아요 대상 장소 ID"
@@ -54,8 +36,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_01_233835) do
     t.datetime "updated_at", null: false, comment: "수정 일시"
     t.bigint "user_id", null: false, comment: "소유자 사용자 ID"
     t.integer "views_count", default: 0, null: false, comment: "조회수"
+    t.index ["category"], name: "index_places_on_category"
+    t.index ["likes_count", "created_at"], name: "index_places_on_popularity"
+    t.index ["name"], name: "index_places_on_name"
     t.index ["user_id", "naver_place_id"], name: "index_places_on_user_id_and_naver_place_id", unique: true
     t.index ["user_id"], name: "index_places_on_user_id"
+    t.index ["views_count"], name: "index_places_on_views_count"
   end
 
   create_table "users", id: { comment: "사용자 고유 식별자" }, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -70,9 +56,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_01_233835) do
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
   end
 
-  add_foreign_key "course_places", "courses"
-  add_foreign_key "course_places", "places"
-  add_foreign_key "courses", "users"
   add_foreign_key "place_likes", "places"
   add_foreign_key "place_likes", "users"
   add_foreign_key "places", "users"

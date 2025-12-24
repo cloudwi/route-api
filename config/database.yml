@@ -13,10 +13,10 @@ default: &default
 development:
   <<: *default
   database: route_api_development
-  username: <%= Rails.application.credentials.database&.fetch(:username, "route_api") %>
-  password: <%= Rails.application.credentials.database&.fetch(:password, "route_api_password") %>
-  host: <%= Rails.application.credentials.database&.fetch(:host, "localhost") %>
-  port: <%= Rails.application.credentials.database&.fetch(:port, 3307) %>
+  username: <%= begin; Rails.application.credentials.database&.fetch(:username, "route_api"); rescue; "route_api"; end %>
+  password: <%= begin; Rails.application.credentials.database&.fetch(:password, "rootpassword"); rescue; "rootpassword"; end %>
+  host: <%= begin; Rails.application.credentials.database&.fetch(:host, "localhost"); rescue; "localhost"; end %>
+  port: <%= begin; Rails.application.credentials.database&.fetch(:port, 3307); rescue; 3307; end %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -30,32 +30,32 @@ test:
 production:
   primary:
     <<: *default
-    database: <%= Rails.application.credentials.dig(:production, :database, :name) %>
-    username: <%= Rails.application.credentials.dig(:production, :database, :username) %>
-    password: <%= Rails.application.credentials.dig(:production, :database, :password) %>
-    host: <%= Rails.application.credentials.dig(:production, :database, :host) %>
-    port: <%= Rails.application.credentials.dig(:production, :database, :port) %>
+    database: <%= begin; Rails.application.credentials.dig(:production, :database, :name) || "route_api_production"; rescue; "route_api_production"; end %>
+    username: <%= begin; Rails.application.credentials.dig(:production, :database, :username) || "route_api"; rescue; "route_api"; end %>
+    password: <%= begin; Rails.application.credentials.dig(:production, :database, :password) || ""; rescue; ""; end %>
+    host: <%= begin; Rails.application.credentials.dig(:production, :database, :host) || "localhost"; rescue; "localhost"; end %>
+    port: <%= begin; Rails.application.credentials.dig(:production, :database, :port) || 3306; rescue; 3306; end %>
   cache:
     <<: *default
-    database: <%= Rails.application.credentials.dig(:production, :database, :cache_name) %>
-    username: <%= Rails.application.credentials.dig(:production, :database, :username) %>
-    password: <%= Rails.application.credentials.dig(:production, :database, :password) %>
-    host: <%= Rails.application.credentials.dig(:production, :database, :host) %>
-    port: <%= Rails.application.credentials.dig(:production, :database, :port) %>
+    database: <%= begin; Rails.application.credentials.dig(:production, :database, :cache_name) || "route_api_cache"; rescue; "route_api_cache"; end %>
+    username: <%= begin; Rails.application.credentials.dig(:production, :database, :username) || "route_api"; rescue; "route_api"; end %>
+    password: <%= begin; Rails.application.credentials.dig(:production, :database, :password) || ""; rescue; ""; end %>
+    host: <%= begin; Rails.application.credentials.dig(:production, :database, :host) || "localhost"; rescue; "localhost"; end %>
+    port: <%= begin; Rails.application.credentials.dig(:production, :database, :port) || 3306; rescue; 3306; end %>
     migrations_paths: db/cache_migrate
   queue:
     <<: *default
-    database: <%= Rails.application.credentials.dig(:production, :database, :queue_name) %>
-    username: <%= Rails.application.credentials.dig(:production, :database, :username) %>
-    password: <%= Rails.application.credentials.dig(:production, :database, :password) %>
-    host: <%= Rails.application.credentials.dig(:production, :database, :host) %>
-    port: <%= Rails.application.credentials.dig(:production, :database, :port) %>
+    database: <%= begin; Rails.application.credentials.dig(:production, :database, :queue_name) || "route_api_queue"; rescue; "route_api_queue"; end %>
+    username: <%= begin; Rails.application.credentials.dig(:production, :database, :username) || "route_api"; rescue; "route_api"; end %>
+    password: <%= begin; Rails.application.credentials.dig(:production, :database, :password) || ""; rescue; ""; end %>
+    host: <%= begin; Rails.application.credentials.dig(:production, :database, :host) || "localhost"; rescue; "localhost"; end %>
+    port: <%= begin; Rails.application.credentials.dig(:production, :database, :port) || 3306; rescue; 3306; end %>
     migrations_paths: db/queue_migrate
   cable:
     <<: *default
-    database: <%= Rails.application.credentials.dig(:production, :database, :cable_name) %>
-    username: <%= Rails.application.credentials.dig(:production, :database, :username) %>
-    password: <%= Rails.application.credentials.dig(:production, :database, :password) %>
-    host: <%= Rails.application.credentials.dig(:production, :database, :host) %>
-    port: <%= Rails.application.credentials.dig(:production, :database, :port) %>
+    database: <%= begin; Rails.application.credentials.dig(:production, :database, :cable_name) || "route_api_cable"; rescue; "route_api_cable"; end %>
+    username: <%= begin; Rails.application.credentials.dig(:production, :database, :username) || "route_api"; rescue; "route_api"; end %>
+    password: <%= begin; Rails.application.credentials.dig(:production, :database, :password) || ""; rescue; ""; end %>
+    host: <%= begin; Rails.application.credentials.dig(:production, :database, :host) || "localhost"; rescue; "localhost"; end %>
+    port: <%= begin; Rails.application.credentials.dig(:production, :database, :port) || 3306; rescue; 3306; end %>
     migrations_paths: db/cable_migrate
