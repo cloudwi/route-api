@@ -186,331 +186,6 @@ paths:
                     type: string
         '404':
           description: 코스 없음
-  "/api/v1/courses/{id}/directions":
-    parameters:
-    - name: id
-      in: path
-      description: 코스 ID
-      required: true
-      schema:
-        type: integer
-    get:
-      summary: 코스 경로 검색
-      tags:
-      - 코스 관리
-      description: 코스 내 장소들 간의 경로를 검색합니다. A → B → C 코스라면 A→B, B→C 경로를 모두 반환합니다.
-      security:
-      - bearer_auth: []
-      parameters:
-      - name: mode
-        in: query
-        required: true
-        enum:
-        - transit
-        - driving
-        description: "이동 수단 (transit: 대중교통, driving: 자동차):\n * `transit` \n * `driving`
-          \n "
-        schema:
-          type: string
-      responses:
-        '200':
-          description: 경로 검색 성공
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  course_id:
-                    type: integer
-                    description: 코스 ID
-                  course_name:
-                    type: string
-                    description: 코스 이름
-                  mode:
-                    type: string
-                    description: 이동 수단
-                  total_segments:
-                    type: integer
-                    description: 총 구간 수
-                  segments:
-                    type: array
-                    description: 구간별 경로 정보
-                    items:
-                      type: object
-                      properties:
-                        segment:
-                          type: integer
-                          description: 구간 번호
-                        from:
-                          type: object
-                          properties:
-                            name:
-                              type: string
-                            lat:
-                              type: number
-                            lng:
-                              type: number
-                        to:
-                          type: object
-                          properties:
-                            name:
-                              type: string
-                            lat:
-                              type: number
-                            lng:
-                              type: number
-                        route:
-                          type: object
-                          description: 경로 상세 정보
-                  summary:
-                    type: object
-                    description: 전체 경로 요약
-                    properties:
-                      total_time:
-                        type: integer
-                        description: "[대중교통] 총 소요시간 (분)"
-                      total_time_text:
-                        type: string
-                        description: "[대중교통] 총 소요시간 텍스트"
-                      total_distance:
-                        type: integer
-                        description: 총 거리 (m)
-                      total_distance_text:
-                        type: string
-                        description: 총 거리 텍스트
-                      total_payment:
-                        type: integer
-                        description: "[대중교통] 총 요금"
-                      total_duration_minutes:
-                        type: number
-                        description: "[자동차] 총 소요시간 (분)"
-                      total_toll_fare:
-                        type: integer
-                        description: "[자동차] 총 통행료"
-                      total_fuel_price:
-                        type: integer
-                        description: "[자동차] 총 유류비"
-                required:
-                - course_id
-                - course_name
-                - mode
-                - total_segments
-                - segments
-                - summary
-        '400':
-          description: 잘못된 이동 수단
-        '404':
-          description: 코스 없음
-        '422':
-          description: 장소가 2개 미만
-  "/api/v1/directions":
-    get:
-      summary: 경로 검색
-      tags:
-      - 경로 검색
-      description: 대중교통(ODsay) 또는 자동차(Naver Directions) 경로를 검색합니다
-      security:
-      - bearer_auth: []
-      parameters:
-      - name: start_lat
-        in: query
-        required: true
-        description: '출발지 위도 (예: 37.5546)'
-        schema:
-          type: number
-      - name: start_lng
-        in: query
-        required: true
-        description: '출발지 경도 (예: 126.9706)'
-        schema:
-          type: number
-      - name: end_lat
-        in: query
-        required: true
-        description: '도착지 위도 (예: 37.4979)'
-        schema:
-          type: number
-      - name: end_lng
-        in: query
-        required: true
-        description: '도착지 경도 (예: 127.0276)'
-        schema:
-          type: number
-      - name: mode
-        in: query
-        required: true
-        enum:
-        - transit
-        - driving
-        description: "이동 수단 (transit: 대중교통, driving: 자동차):\n * `transit` \n * `driving`
-          \n "
-        schema:
-          type: string
-      - name: path_type
-        in: query
-        required: false
-        enum:
-        - 0
-        - 1
-        - 2
-        description: "[대중교통] 경로 유형 (0: 모두, 1: 지하철, 2: 버스)"
-        schema:
-          type: integer
-      - name: include_graph_info
-        in: query
-        required: false
-        enum:
-        - 'true'
-        - 'false'
-        description: "[대중교통] 노선 좌표 포함 여부 (true: 지도에 경로 그리기용 좌표 포함)"
-        schema:
-          type: string
-      - name: route_option
-        in: query
-        required: false
-        enum:
-        - fastest
-        - comfortable
-        - optimal
-        - avoid_toll
-        - avoid_car_only
-        description: "[자동차] 경로 옵션 (fastest: 빠른길, comfortable: 편한길, optimal: 최적, avoid_toll:
-          무료우선, avoid_car_only: 자동차전용도로 회피)"
-        schema:
-          type: string
-      - name: car_type
-        in: query
-        required: false
-        enum:
-        - 1
-        - 2
-        - 3
-        - 4
-        - 5
-        - 6
-        description: "[자동차] 차량 타입 (1: 일반, 2: 소형, 3: 중형, 4: 대형, 5: 이륜, 6: 경차)"
-        schema:
-          type: integer
-      - name: waypoints
-        in: query
-        required: false
-        description: '[자동차] 경유지 JSON 배열 (예: [{"lat":37.52,"lng":127.0}], 최대 5개)'
-        schema:
-          type: string
-      responses:
-        '200':
-          description: 자동차 경로 검색 성공
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  mode:
-                    type: string
-                    description: 이동 수단
-                  start:
-                    type: object
-                    properties:
-                      lat:
-                        type: number
-                        description: 출발지 위도
-                      lng:
-                        type: number
-                        description: 출발지 경도
-                  destination:
-                    type: object
-                    properties:
-                      lat:
-                        type: number
-                        description: 도착지 위도
-                      lng:
-                        type: number
-                        description: 도착지 경도
-                  result:
-                    type: object
-                    description: 경로 검색 결과 (mode에 따라 구조가 다름)
-                    properties:
-                      search_type:
-                        type: integer
-                        description: "[대중교통] 검색 유형"
-                      count:
-                        type: integer
-                        description: "[대중교통] 경로 수"
-                      paths:
-                        type: array
-                        description: "[대중교통] 경로 목록"
-                        items:
-                          type: object
-                          properties:
-                            path_type:
-                              type: integer
-                              description: '경로 유형 (1: 지하철, 2: 버스, 3: 버스+지하철)'
-                            total_time:
-                              type: integer
-                              description: 총 소요시간 (분)
-                            total_distance:
-                              type: integer
-                              description: 총 거리 (m)
-                            total_walk:
-                              type: integer
-                              description: 총 도보 거리 (m)
-                            transfer_count:
-                              type: integer
-                              description: 환승 횟수
-                            payment:
-                              type: integer
-                              description: 총 요금
-                            sub_paths:
-                              type: array
-                              description: 세부 경로
-                      summary:
-                        type: object
-                        description: "[자동차] 경로 요약"
-                        properties:
-                          distance:
-                            type: integer
-                            description: 총 거리 (m)
-                          duration:
-                            type: integer
-                            description: 총 소요시간 (ms)
-                          duration_minutes:
-                            type: number
-                            description: 총 소요시간 (분)
-                          toll_fare:
-                            type: integer
-                            description: 통행료
-                          taxi_fare:
-                            type: integer
-                            description: 예상 택시비
-                          fuel_price:
-                            type: integer
-                            description: 예상 유류비
-                      sections:
-                        type: array
-                        description: "[자동차] 구간 정보"
-                      path:
-                        type: array
-                        description: "[자동차] 경로 좌표 배열"
-                required:
-                - mode
-                - start
-                - destination
-                - result
-        '400':
-          description: 잘못된 좌표
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    description: 에러 메시지
-                  mode:
-                    type: string
-                    nullable: true
-        '401':
-          description: 인증 실패
   "/api/v1/external/search":
     get:
       summary: 외부 장소 검색
@@ -593,6 +268,427 @@ paths:
                     type: string
                   message:
                     type: string
+  "/api/v1/my_search":
+    get:
+      summary: 내부 장소/코스 검색
+      tags:
+      - 검색
+      description: 저장된 장소와 코스를 검색합니다
+      parameters:
+      - name: q
+        in: query
+        required: false
+        description: 검색 키워드
+        schema:
+          type: string
+      - name: category
+        in: query
+        required: false
+        description: 카테고리 필터 (장소 검색에만 적용)
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        enum:
+        - all
+        - places
+        - courses
+        description: "검색 타입 (all: 전체, places: 장소만, courses: 코스만):\n * `all` \n * `places`
+          \n * `courses` \n "
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: '결과 개수 제한 (1-100, 기본값: 20)'
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: 검색 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  places:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: 내부 장소 ID
+                        naverPlaceId:
+                          type: string
+                          description: 네이버 장소 ID
+                        name:
+                          type: string
+                          description: 장소명
+                        address:
+                          type: string
+                          description: 지번 주소
+                        roadAddress:
+                          type: string
+                          description: 도로명 주소
+                        lat:
+                          type: number
+                          description: 위도
+                        lng:
+                          type: number
+                          description: 경도
+                        category:
+                          type: string
+                          description: 카테고리
+                        telephone:
+                          type: string
+                          description: 전화번호
+                        naverMapUrl:
+                          type: string
+                          description: 네이버 지도 URL
+                        viewsCount:
+                          type: integer
+                          description: 조회수
+                        likesCount:
+                          type: integer
+                          description: 좋아요 수
+                        createdAt:
+                          type: string
+                          format: date-time
+                          description: 생성일시
+                  courses:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: 코스 ID
+                        name:
+                          type: string
+                          description: 코스 이름
+                        placesCount:
+                          type: integer
+                          description: 장소 개수
+                        places:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                description: 네이버 장소 ID
+                              name:
+                                type: string
+                                description: 장소명
+                              category:
+                                type: string
+                                description: 카테고리
+                              lat:
+                                type: number
+                                description: 위도
+                              lng:
+                                type: number
+                                description: 경도
+                        createdAt:
+                          type: string
+                          format: date-time
+                          description: 생성일시
+  "/api/v1/my_search/categories":
+    get:
+      summary: 카테고리 목록 조회
+      tags:
+      - 검색
+      description: 사용 가능한 장소 카테고리 목록을 조회합니다
+      responses:
+        '200':
+          description: 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  categories:
+                    type: array
+                    items:
+                      type: string
+                    description: 카테고리 목록
+                required:
+                - categories
+  "/api/v1/places":
+    get:
+      summary: 장소 목록 조회
+      tags:
+      - 장소
+      description: 현재 로그인한 사용자의 장소 목록을 조회합니다
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: 조회 성공
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: 내부 장소 ID
+                    naverPlaceId:
+                      type: string
+                      description: 네이버 장소 ID
+                    name:
+                      type: string
+                      description: 장소명
+                    address:
+                      type: string
+                      description: 지번 주소
+                    roadAddress:
+                      type: string
+                      description: 도로명 주소
+                    lat:
+                      type: number
+                      description: 위도
+                    lng:
+                      type: number
+                      description: 경도
+                    category:
+                      type: string
+                      description: 카테고리
+                    telephone:
+                      type: string
+                      description: 전화번호
+                    naverMapUrl:
+                      type: string
+                      description: 네이버 지도 URL
+                    viewsCount:
+                      type: integer
+                      description: 조회수
+                    likesCount:
+                      type: integer
+                      description: 좋아요 수
+                    liked:
+                      type: boolean
+                      description: 좋아요 여부
+                    createdAt:
+                      type: string
+                      format: date-time
+                      description: 생성일시
+        '401':
+          description: 인증 실패
+  "/api/v1/places/liked":
+    get:
+      summary: 좋아요한 장소 목록
+      tags:
+      - 장소
+      description: 현재 사용자가 좋아요한 장소 목록을 조회합니다
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: 조회 성공
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    naverPlaceId:
+                      type: string
+                    name:
+                      type: string
+                    address:
+                      type: string
+                    roadAddress:
+                      type: string
+                    lat:
+                      type: number
+                    lng:
+                      type: number
+                    category:
+                      type: string
+                    telephone:
+                      type: string
+                    naverMapUrl:
+                      type: string
+                    viewsCount:
+                      type: integer
+                    likesCount:
+                      type: integer
+                    liked:
+                      type: boolean
+                    createdAt:
+                      type: string
+                      format: date-time
+        '401':
+          description: 인증 실패
+  "/api/v1/places/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: 장소 ID
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: 장소 상세 조회
+      tags:
+      - 장소
+      description: 특정 장소의 상세 정보를 조회합니다 (조회수 증가)
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  naverPlaceId:
+                    type: string
+                    nullable: true
+                  name:
+                    type: string
+                  address:
+                    type: string
+                  roadAddress:
+                    type: string
+                    nullable: true
+                  lat:
+                    type: number
+                  lng:
+                    type: number
+                  category:
+                    type: string
+                    nullable: true
+                  telephone:
+                    type: string
+                    nullable: true
+                  naverMapUrl:
+                    type: string
+                    nullable: true
+                  viewsCount:
+                    type: integer
+                  likesCount:
+                    type: integer
+                  liked:
+                    type: boolean
+                  createdAt:
+                    type: string
+                    format: date-time
+        '404':
+          description: 장소 없음
+        '401':
+          description: 인증 실패
+  "/api/v1/places/{place_id}/likes":
+    parameters:
+    - name: place_id
+      in: path
+      description: 장소 ID
+      required: true
+      schema:
+        type: integer
+    post:
+      summary: 좋아요 토글
+      tags:
+      - 장소
+      description: 장소에 좋아요를 추가하거나 취소합니다
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: 결과 메시지
+                  likes_count:
+                    type: integer
+                    description: 현재 좋아요 수
+                  liked:
+                    type: boolean
+                    description: 좋아요 상태
+        '404':
+          description: 장소 없음
+        '401':
+          description: 인증 실패
+  "/api/v1/popular_places":
+    get:
+      summary: 인기 장소 조회
+      tags:
+      - 장소
+      description: 인기 장소 Top 5를 조회합니다 (조회수 + 좋아요 * 3 기준)
+      responses:
+        '200':
+          description: 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  places:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: 내부 장소 ID
+                        naverPlaceId:
+                          type: string
+                          description: 네이버 장소 ID
+                        name:
+                          type: string
+                          description: 장소명
+                        address:
+                          type: string
+                          description: 지번 주소
+                        roadAddress:
+                          type: string
+                          description: 도로명 주소
+                        lat:
+                          type: number
+                          description: 위도
+                        lng:
+                          type: number
+                          description: 경도
+                        category:
+                          type: string
+                          description: 카테고리
+                        telephone:
+                          type: string
+                          description: 전화번호
+                        naverMapUrl:
+                          type: string
+                          description: 네이버 지도 URL
+                        viewsCount:
+                          type: integer
+                          description: 조회수
+                        likesCount:
+                          type: integer
+                          description: 좋아요 수
+                        popularityScore:
+                          type: number
+                          description: 인기 점수
+                        createdAt:
+                          type: string
+                          format: date-time
+                          description: 생성일시
+                required:
+                - places
 servers:
 - url: http://localhost:3000
   description: Development server

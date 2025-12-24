@@ -32,21 +32,12 @@ Rails.application.routes.draw do
       get "my_search", to: "my_search#index"  # GET /api/v1/my_search?q=카페&category=카페
       get "my_search/categories", to: "my_search#categories"  # GET /api/v1/my_search/categories
 
-      # 경로 검색 (대중교통/자동차)
-      get "directions", to: "directions#index"  # GET /api/v1/directions?mode=transit|driving
-
       # 코스 관리
-      resources :courses, only: [ :index, :show, :create, :destroy ] do
-        member do
-          get :directions  # GET /api/v1/courses/:id/directions?mode=transit|driving
-        end
-      end
+      resources :courses, only: [ :index, :show, :create, :destroy ]
 
       # 장소 관리
       resources :places, only: [ :index, :show ] do
-        member do
-          post :like    # POST /api/v1/places/:id/like - 좋아요 토글
-        end
+        resource :likes, only: [ :create ], controller: "place_likes"  # POST /api/v1/places/:id/likes - 좋아요 토글
         collection do
           get :liked    # GET /api/v1/places/liked - 좋아요한 장소 목록
         end

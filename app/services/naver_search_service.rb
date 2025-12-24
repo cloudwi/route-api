@@ -4,23 +4,15 @@ class NaverSearchService
   include HTTParty
 
   # 네이버 검색 API로 장소를 검색합니다
-  # 로컬 검색 결과가 없으면 주소 검색(Geocoding)도 시도합니다
-  # @param query [String] 검색 키워드 (예: "스타벅스 강남역" 또는 "언남길 71")
+  # @param query [String] 검색 키워드 (예: "스타벅스 강남역")
   # @param display [Integer] 검색 결과 개수 (기본: 5, 최대: 5)
   # @return [Array<Hash>] 검색 결과 배열
   def self.search_places(query:, display: 5)
-    # 1. 로컬 검색 (상호명/장소명)
-    local_results = search_local(query: query, display: display)
-
-    # 2. 로컬 검색 결과가 없으면 주소 검색(Geocoding) 시도
-    if local_results.empty?
-      geocode_results = search_address(query: query)
-      return geocode_results
-    end
-
-    local_results
+    # 로컬 검색 (상호명/장소명)
+    search_local(query: query, display: display)
   rescue StandardError => e
     Rails.logger.error "Naver Search Service Error: #{e.message}"
+    Rails.logger.error e.backtrace.join("\n")
     []
   end
 
@@ -30,8 +22,8 @@ class NaverSearchService
       "https://openapi.naver.com/v1/search/local.json",
       query: { query: query, display: display },
       headers: {
-        "X-Naver-Client-Id" => Rails.application.credentials.dig(Rails.env.to_sym, :naver, :client_id),
-        "X-Naver-Client-Secret" => Rails.application.credentials.dig(Rails.env.to_sym, :naver, :client_secret)
+        "X-Naver-Client-Id" => Rails.application.credentials.naver&.client_id,
+        "X-Naver-Client-Secret" => Rails.application.credentials.naver&.client_secret
       }
     )
 
@@ -49,8 +41,8 @@ class NaverSearchService
       "https://maps.apigw.ntruss.com/map-geocode/v2/geocode",
       query: { query: query },
       headers: {
-        "X-NCP-APIGW-API-KEY-ID" => Rails.application.credentials.dig(Rails.env.to_sym, :naver_cloud, :client_id),
-        "X-NCP-APIGW-API-KEY" => Rails.application.credentials.dig(Rails.env.to_sym, :naver_cloud, :client_secret)
+        "X-NCP-APIGW-API-KEY-ID" => Rails.application.credentials.naver&.client_id,
+        "X-NCP-APIGW-API-KEY" => Rails.application.credentials.naver&.client_secret
       }
     )
 

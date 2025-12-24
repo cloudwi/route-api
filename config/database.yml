@@ -13,10 +13,10 @@ default: &default
 development:
   <<: *default
   database: route_api_development
-  username: <%= Rails.application.credentials.dig(:development, :database, :username) %>
-  password: <%= Rails.application.credentials.dig(:development, :database, :password) %>
-  host: <%= Rails.application.credentials.dig(:development, :database, :host) %>
-  port: <%= Rails.application.credentials.dig(:development, :database, :port) %>
+  username: <%= Rails.application.credentials.database&.fetch(:username, "route_api") %>
+  password: <%= Rails.application.credentials.database&.fetch(:password, "route_api_password") %>
+  host: <%= Rails.application.credentials.database&.fetch(:host, "localhost") %>
+  port: <%= Rails.application.credentials.database&.fetch(:port, 3307) %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
